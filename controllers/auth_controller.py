@@ -4,10 +4,17 @@ from extensions import db
 from models.user import User
 
 class AuthController():
-    def login(username, password):
-        if(username=="teste@gmail.com" and password == "123"):
-            return True
-        return False
+    def login(email, password):
+        existing_user = User.query.filter_by(email= email).first()
+
+        if not existing_user:
+            return None
+        
+        if(check_password_hash(existing_user.password, password)):
+            login_user(existing_user)
+            return existing_user
+        
+        return None
 
     def register(email, password):
         #Verificar se user existe
@@ -28,5 +35,6 @@ class AuthController():
 
         return new_user
 
-    def logoff():
-        pass
+    def logout():
+        logout_user()
+        return True

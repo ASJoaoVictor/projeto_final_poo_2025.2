@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-  rel="stylesheet"
->
     <title>Login</title>
 </head>
 <body>
     <h2>Login</h2>
    <form action="/auth/login" method="post">
         <label for="">Login:</label>
-        <input type="email" name="username" required><br>
+        <input type="email" name="email" placeholder="email" required><br>
         <label for="">Senha:</label>
-        <input type="password" name="password" required><br>
+        <input type="password" name="password" id="password" placeholder="senha" required><br>
 
         <button type="submit">Entrar</button>
    </form>
 
    <a href="/auth/register">Cadastrar</a>
 </body>
+<script>
+  document.getElementById("password").addEventListener("input", () => {
+    console.log("teste")
+    });
+</script>
 </html>
