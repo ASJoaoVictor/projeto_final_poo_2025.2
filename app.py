@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for
 from routes.auth_routes import auth_bp
+from routes.main_routes import main_bp
 from extensions import db, login_manager
 from models.user import User
 
@@ -20,6 +21,7 @@ def create_app():
         return User.query.get(int(user_id))
     
     app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
 
     @app.route("/")
     def default():

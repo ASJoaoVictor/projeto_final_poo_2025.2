@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Logado</h1>
+    <h1>Bem vindo, {{user.username.split()[0]}}</h1>
     <a href="{{url_for('auth_bp.logout')}}">logoff</a>
 </body>
 </html>

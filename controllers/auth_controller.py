@@ -16,7 +16,7 @@ class AuthController():
         
         return None
 
-    def register(email, password):
+    def register(username, email, password):
         #Verificar se user existe
         existing_user = User.query.filter_by(email= email).first()
 
@@ -27,7 +27,7 @@ class AuthController():
         password_hash = generate_password_hash(password)
 
         #criar novo usuário
-        new_user = User(email= email, password= password_hash)
+        new_user = User(username= username, email= email, password= password_hash)
 
         #salva no db
         db.session.add(new_user)

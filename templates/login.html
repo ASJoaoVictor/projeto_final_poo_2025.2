@@ -3,24 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <title>Login</title>
 </head>
-<body>
-    <h2>Login</h2>
-   <form action="/auth/login" method="post">
-        <label for="">Login:</label>
-        <input type="email" name="email" placeholder="email" required><br>
-        <label for="">Senha:</label>
-        <input type="password" name="password" id="password" placeholder="senha" required><br>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
 
-        <button type="submit">Entrar</button>
-   </form>
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm" >
+        <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
 
-   <a href="/auth/register">Cadastrar</a>
+        <form action="/auth/login" method="post" class="space-y-4">
+            <div>
+                <label for="" class="block mb-1">Login:</label>
+                <input type="email" name="email" placeholder="seuemail@exemplo.com" class="w-full border border-gray-300 rounded px-3 py-2" required><br>
+
+                <label for="" class="block mb-1">Senha:</label>
+                <input type="password" name="password" id="password" placeholder="********" class="w-full border border-gray-300 rounded px-3 py-2" required><br>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded transition mt-4">Entrar</button>
+            </div>
+        </form>
+
+        <p class="text-right mt-4">
+            <a href="/auth/register" class="text-blue-600 hover:underline">Cadastrar</a>
+        </p>
+        {% set styles = {
+    'success': 'bg-green-100 text-green-700 border-green-300',
+    'error': 'bg-red-100 text-red-700 border-red-300',
+    'warning': 'bg-yellow-100 text-yellow-700 border-yellow-300'
+} %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+       {% if messages %}
+         <div class="mb-4 space-y-2">
+           {% for category, message in messages %}
+             <div class="p-3 rounded-lg text-sm text-center border {{styles[category]}}">
+               {{ message }}
+             </div>
+           {% endfor %}
+         </div>
+       {% endif %}
+     {% endwith %}
+   </div>
+
 </body>
-<script>
-  document.getElementById("password").addEventListener("input", () => {
-    console.log("teste")
-    });
-</script>
 </html>

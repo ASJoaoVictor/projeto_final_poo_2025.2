@@ -6,20 +6,23 @@ auth_bp = Blueprint("auth_bp", __name__, url_prefix="/auth")
 
 @auth_bp.route("/login", methods=["GET"])
 def login_page():
-    if current_user.is_authenticated:
-       return render_template("dashboard.html")
     return render_template("login.html")
+"""     if current_user.is_authenticated:
+       return redirect(url_for("main_bp.index_page")) """
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
     #pegar dados do form
     email = request.form.get("email")
     password = request.form.get("password")
-
-    if AuthController.login(email, password):
-        return render_template("dashboard.html")
     
-    return render_login()
+    user = AuthController.login(email, password)
+    if user:
+        flash("Login bem-sucedido!", "success")
+        return redirect(url_for("auth_bp.login_page"))
+    
+    flash("E-mail ou senha inválida", "error")
+    return redirect(url_for("auth_bp.login_page"))
     
 
 @auth_bp.route("/register", methods=["GET"])
@@ -28,13 +31,14 @@ def register_page():
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
+    username = request.form.get("username")
     email = request.form.get("email")
     password = request.form.get("password")
-    user = AuthController.register(email, password)
+    user = AuthController.register(username, email, password)
 
     if user:
         flash("Usuário cadastrado")
-        return redirect(url_for('auth_bp.render_login'))
+        return redirect(url_for('auth_bp.login_page'))
     
     return "deu errado"
 

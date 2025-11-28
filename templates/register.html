@@ -3,18 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Cadastro</title>
 </head>
-<body>
-    <h1>Cadastro</h1>
-    <form action="/auth/register" method="post">
-        <label for="">Email:</label>
-        <input type="email" name="email">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 w-full max-w-sm shadow-md rounded-lg">
 
-        <label for="">senha</label>
-        <input type="text" name="password">
+        <h2 class="text-center font-semibold text-2xl mb-6">Cadastro</h2>
 
-        <button type="submit">Cadastrar</button>
-    </form>
+        <form action="/auth/register" method="post">
+            <label for="">Nome:</label>
+            <input type="text" name="username" class="w-full border border-gray-300 rounded px-3 py-2"><br>
+
+            <label for="">Email:</label>
+            <input type="email" name="email" class="w-full border border-gray-300 rounded px-3 py-2"><br>
+
+            <label for="">senha</label>
+            <input type="text" name="password" class="w-full border border-gray-300 rounded px-3 py-2">
+            <label for="" id="msg_password"></label><br>
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 rounded text-white transition px-3 py-2 mt-4">Cadastrar</button>
+        </form>
+
+        <p class="text-right mt-3">
+            <a href="{{url_for('auth_bp.login_page')}}" class="text-blue-600 hover:underline">Login</a>
+        </p>
+    </div>
 </body>
+<script>
+    var input_password = document.getElementsByName("password")[0]
+    var message = document.getElementById("msg_password")
+    input_password.addEventListener("input", () => {
+        password = input_password.value
+        console.log(password.length)
+        if(password.length >= 8){
+            message.innerText = "Forte"
+            message.style.color = "green"
+        }else if(password.length >= 5){
+            message.innerText = "média"
+        }
+    });
+</script>
 </html>
