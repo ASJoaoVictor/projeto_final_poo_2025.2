@@ -4,9 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+        <style>
+        /* Estilos simples só para organizar os cards */
+        .wallet-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .wallet-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 220px;
+            border-radius: 8px;
+            min-height: 144.375px;
+        }
+
+        .wallet-card h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .wallet-card .balance {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Bem vindo, {{user.username.split()[0]}}</h1>
-    <a href="{{url_for('auth_bp.logout')}}">logoff</a>
+    <a href="{{url_for('auth_bp.logout')}}">logout</a>
+    <h2>Carteiras</h2>
+
+    <div class="wallet-container">
+        {% for wallet in wallets: %}
+        <a href="{{url_for('wallet_bp.wallet_detail_page', wallet_id=wallet.id)}}">
+            <div class="wallet-card">
+                <h3>{{ wallet.wallet_name }}</h3>
+
+                <p>Saldo atual:</p>
+                <p class="balance">R$ {{wallet.current_balance}}</p>
+
+                <a href="{{url_for('wallet_bp.wallet_detail_page', wallet_id=wallet.id)}}">Ver detalhes</a>
+            </div>
+        </a>
+        {% endfor %}
+        <a href="{{url_for('wallet_bp.wallet_new_page')}}"><div class="wallet-card">adicionar</div></a>
+    </div>
 </body>
 </html>

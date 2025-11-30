@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for
 from routes.auth_routes import auth_bp
 from routes.main_routes import main_bp
+from routes.wallet_routes import wallet_bp
 from extensions import db, login_manager
 from models.user import User
 
@@ -15,6 +16,8 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = "auth_bp.login"
+    login_manager.login_message = "Por favor, faça login para acessar esta página."
+    login_manager.login_message_category = "warning"
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -22,6 +25,7 @@ def create_app():
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
+    app.register_blueprint(wallet_bp)
 
     @app.route("/")
     def default():

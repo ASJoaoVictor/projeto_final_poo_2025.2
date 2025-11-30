@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{wallet.wallet_name}}</title>
+</head>
+<body>
+    <h2>Carteira: {{wallet.wallet_name}}</h2>
+    <p>Saldo inicial: R$ {{wallet.initial_balance}}</p>
+    <p>Saldo atual: R$ {{wallet.current_balance}}</p>
+    <p>Criada em: {{wallet.created_at}}</p>
+
+    <hr>
+
+    <a href="/wallet/{{ wallet.id }}/edit">Editar</a><br>
+    <form action="{{url_for('wallet_bp.delete_wallet', wallet_id=wallet.id)}}" method="post">
+        <button type="submit">Desativar</button>
+    </form>
+    <a href="/dashboard">Voltar</a>
+</body>
+</html>

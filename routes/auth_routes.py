@@ -6,9 +6,9 @@ auth_bp = Blueprint("auth_bp", __name__, url_prefix="/auth")
 
 @auth_bp.route("/login", methods=["GET"])
 def login_page():
+    if current_user.is_authenticated:
+       return redirect(url_for("main_bp.dashboard_page"))
     return render_template("login.html")
-"""     if current_user.is_authenticated:
-       return redirect(url_for("main_bp.index_page")) """
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
@@ -18,8 +18,7 @@ def login():
     
     user = AuthController.login(email, password)
     if user:
-        flash("Login bem-sucedido!", "success")
-        return redirect(url_for("auth_bp.login_page"))
+        return redirect(url_for("main_bp.dashboard_page"))
     
     flash("E-mail ou senha inválida", "error")
     return redirect(url_for("auth_bp.login_page"))
@@ -37,12 +36,13 @@ def register():
     user = AuthController.register(username, email, password)
 
     if user:
-        flash("Usuário cadastrado")
+        flash("Usuário cadastrado com sucesso", "success")
         return redirect(url_for('auth_bp.login_page'))
     
-    return "deu errado"
+    flash("E-mail já cadastro com outro usuário!", "warning")
+    return redirect(url_for("auth_bp.register_page"))
 
-@auth_bp.route("/logoff", methods=["GET", "POST"])
+@auth_bp.route("/logout", methods=["GET", "POST"])
 @login_required
 def logout():
     AuthController.logout()

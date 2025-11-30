@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-bt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova carteira</title>
+</head>
+<body>
+    <h2>Criar novar Carteira</h2>
+
+    <form action="{{url_for('wallet_bp.create_wallet')}}" method="POST">
+        <label for="">Nome da carteira</label>
+        <input type="text" name="wallet_name" required><br>
+
+        <label for="">Saldo inicial: </label>
+        <input type="number" name="initial_balance" min="0" step="0.01" required>
+
+        <button type="submit">Criar</button>
+    </form>
+</body>
+</html>
