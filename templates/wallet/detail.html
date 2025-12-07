@@ -12,7 +12,9 @@
     <p>Criada em: {{wallet.created_at}}</p>
 
     <hr>
-
+    {%for transaction in transactions:%}
+        <p>{{transaction.category.name}} -- R${{transaction.value}}</p>
+    {%endfor%}
     <a href="/wallet/{{ wallet.id }}/edit">Editar</a><br>
     <form action="{{url_for('wallet_bp.delete_wallet', wallet_id=wallet.id)}}" method="post">
         <button type="submit">Desativar</button>

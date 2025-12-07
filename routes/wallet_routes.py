@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from controllers.wallet_controller import WalletController
+from controllers.transaction_controller import TransactionController
 from flask_login import login_required, current_user
 
 wallet_bp = Blueprint("wallet_bp", __name__, url_prefix="/wallet")
@@ -22,12 +23,15 @@ def create_wallet():
         return redirect(url_for("main_bp.dashboard_page"))
     
     flash("Não foi possível adicionar nova carteira", "warning")
-    return redirect(url_for("wallet_bp.wallet_new_page"))
+    return "deu problema"
+    #return redirect(url_for("wallet_bp.wallet_new_page"))
 
 @wallet_bp.route("/<int:wallet_id>", methods=["GET"])
 @login_required
 def wallet_detail_page(wallet_id):
     wallet = WalletController.get_wallet_by_id(wallet_id)
+    #transactions = TransactionController.get_transactions_by_wallet(wallet_id)
+    transactions = wallet.transactions
 
     if not wallet:
         return "Carteira não encontrada", 404
@@ -35,7 +39,7 @@ def wallet_detail_page(wallet_id):
     if wallet.user_id != current_user.id:
         return "Acesso negado", 403
     
-    return render_template("wallet/detail.html", wallet= wallet)
+    return render_template("wallet/detail.html", wallet= wallet, transactions= transactions)
 
 @wallet_bp.route("/<int:wallet_id>/delete", methods=["GET", "POST"])
 def delete_wallet(wallet_id):

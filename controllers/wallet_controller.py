@@ -1,16 +1,27 @@
 from extensions import db
 from models.wallet import Wallet
+from models.category import SystemCategory
+from controllers.transaction_controller import TransactionController
+from controllers.category_controller import CategoryController
+
 
 class WalletController():
 
     @staticmethod
     def create_wallet(wallet_name, initial_balance, user_id):
-        initial_balance = float(initial_balance)
+        try:
+            initial_balance = float(initial_balance)
+        except:
+            return None
         
-        existing_wallet = Wallet.query.filter_by(user_id= user_id, wallet_name= wallet_name).first()
+        existing_wallet = Wallet.query.filter_by(
+            user_id= user_id, 
+            wallet_name= wallet_name
+        ).first()
 
         if existing_wallet:
             return None
+  
 
         wallet = Wallet(
             wallet_name= wallet_name,
@@ -20,6 +31,20 @@ class WalletController():
 
         db.session.add(wallet)
         db.session.commit()
+
+        category = SystemCategory.query.filter_by(name= "Depósito inicial").first()
+
+        if not category:
+            return None
+
+        if initial_balance > 0:
+            TransactionController.create_transaction(
+                type= "income",
+                value= initial_balance,
+                wallet_id= wallet.id,
+                category_id= category.id,
+                user_id= user_id,
+            )
 
         return wallet
     
@@ -37,7 +62,9 @@ class WalletController():
 
     @staticmethod
     def deactivate_wallet(wallet_id, user_id):
-        wallet = Wallet.query.filter_by(id= wallet_id, user_id= user_id).first()
+        wallet = Wallet.query.filter_by(
+            id= wallet_id, 
+            user_id= user_id).first()
 
         if not wallet:
             return None

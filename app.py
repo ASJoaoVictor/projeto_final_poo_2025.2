@@ -2,9 +2,11 @@ from flask import Flask, redirect, url_for
 from routes.auth_routes import auth_bp
 from routes.main_routes import main_bp
 from routes.wallet_routes import wallet_bp
+from routes.transaction_routes import transaction_bp
 from extensions import db, login_manager
 from models.user import User
-
+from controllers.category_controller import CategoryController
+from utils import seeder
 
 def create_app():
     app = Flask(__name__)
@@ -19,6 +21,10 @@ def create_app():
     login_manager.login_message = "Por favor, faça login para acessar esta página."
     login_manager.login_message_category = "warning"
 
+    with app.app_context():
+        db.create_all()         # cria tabelas
+        seeder.seed_system_categories()  # popula categorias do sistema
+
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
@@ -26,6 +32,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(wallet_bp)
+    app.register_blueprint(transaction_bp)
 
     @app.route("/")
     def default():
