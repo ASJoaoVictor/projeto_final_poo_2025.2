@@ -9,7 +9,7 @@ class Wallet(db.Model):
     initial_balance = db.Column(db.Float, default= 0.0)
     current_balance = db.Column(db.Float, default= 0.0)
     is_active = db.Column(db.Boolean, default= True)
-    created_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc).date())
 
     #chave FK
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable= False)

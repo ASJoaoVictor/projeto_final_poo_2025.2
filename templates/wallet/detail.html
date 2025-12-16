@@ -1,24 +1,111 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{wallet.wallet_name}}</title>
-</head>
-<body>
-    <h2>Carteira: {{wallet.wallet_name}}</h2>
-    <p>Saldo inicial: R$ {{wallet.initial_balance}}</p>
-    <p>Saldo atual: R$ {{wallet.current_balance}}</p>
-    <p>Criada em: {{wallet.created_at}}</p>
+{% extends "base.html" %}
 
-    <hr>
-    {%for transaction in transactions:%}
-        <p>{{transaction.category.name}} -- R${{transaction.value}}</p>
-    {%endfor%}
-    <a href="/wallet/{{ wallet.id }}/edit">Editar</a><br>
-    <form action="{{url_for('wallet_bp.delete_wallet', wallet_id=wallet.id)}}" method="post">
-        <button type="submit">Desativar</button>
-    </form>
-    <a href="/dashboard">Voltar</a>
-</body>
-</html>
+{% block content %}
+
+<h1 class="text-2xl font-semibold text-gray-700 mb-6">
+    {{ wallet.wallet_name }}
+</h1>
+
+<!-- CARD com informações da carteira -->
+<div class="bg-white shadow-sm rounded-xl p-6 border border-gray-200 mb-10">
+
+    <!-- dados -->
+    <div class="mb-6 space-y-1 text-gray-700">
+        <p><span class="font-medium">Saldo inicial:</span> R$ {{ wallet.initial_balance }}</p>
+        <p><span class="font-medium">Saldo atual:</span> R$ {{ wallet.current_balance }}</p>
+        <p><span class="font-medium">Criada em:</span> {{ wallet.created_at.strftime("%d/%m/%Y") }}</p>
+    </div>
+
+    <!-- botoes -->
+    <div class="flex gap-4">
+
+        <button id="openEditWalletModal" onclick="openEditWalletModal('3', '{{wallet.wallet_name}}')"
+                class="px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700 transition">
+            Editar
+        </button>
+
+        <button type="button" 
+            onclick="openConfirmModal(
+                '{{ url_for('wallet_bp.delete_wallet', wallet_id=wallet.id) }}', 
+                'Desativar carteira', 
+                'Tem certeza que deseja desativar a carteira <strong>{{ wallet.wallet_name }}</strong>? Você não poderá realizar novas transações nela.'
+            )"
+            class="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition">
+            Desativar
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- Título -->
+<h2 class="text-xl text-gray-700 font-medium mb-4">Transações</h2>
+
+<!-- LISTA DE TRANSAÇÕES -->
+<ul class="bg-white shadow-sm rounded-xl border border-gray-200 divide-y">
+
+    {% if transactions %}
+        {% for transaction in transactions %}
+            <li class="p-4 flex items-center justify-between">
+
+                <!-- Categoria -->
+                <span class="text-gray-600 font-medium">
+                    {{ transaction.category.name }}
+                </span>
+
+                <!-- Valor -->
+                <span class="{% if transaction.transaction_type == 'income' %}text-green-600{% else %}text-red-600{% endif %} font-semibold">
+                    R$ {{ transaction.value }}
+                </span>
+
+                <!-- Data -->
+                <span class="text-gray-500 text-sm">
+                    {{ transaction.created_at.strftime('%d/%m/%Y') if transaction.created_at else "Sem data" }}
+                </span>
+
+                <!-- Ações -->
+                <div class="flex gap-3 text-sm">
+                    <button 
+                        type="button"
+                        class="text-purple-600 hover:underline"
+                        onclick="openEditTransactionModal(
+                            '#',
+                            '{{transaction.value}}',
+                            '{{ transaction.created_at.strftime('%Y-%m-%d') if transaction.created_at else '' }}',
+                            '{{transaction.category_id}}'
+                        )">
+                        Editar
+                    </button>
+                    
+                    <button type="button" 
+                        onclick="openConfirmModal(
+                            '#', 
+                            'Excluir Transação', 
+                            'Tem certeza que deseja apagar a transação de R$ {{ transaction.value }}? O saldo da carteira será atualizado.'
+                        )"
+                        class="text-red-600 hover:text-red-800 hover:underline transition-colors font-medium text-sm flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Deletar
+                    </button>
+                </div>
+
+                
+            </li>
+            <!-- MODAL -->
+            
+            
+        </li>
+        
+        
+        {% endfor %}
+        {% else %}
+        <li class="p-4 text-gray-500 text-center">Nenhuma transação encontrada</li>
+        {% endif %}
+        
+    </ul>
+    
+{% include "transaction/edit.html" %}
+{% include "wallet/edit.html" %}
+
+{% endblock %}

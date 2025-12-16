@@ -1,0 +1,98 @@
+<div id="modal-edit-transaction" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    
+    <div id="backdrop-edit-transaction" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
+
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            
+            <div id="panel-edit-transaction" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all duration-300 ease-out opacity-0 scale-95 sm:my-8 sm:w-full sm:max-w-md border border-gray-100">
+                
+                <div class="bg-white px-6 py-4 border-b border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-800">Editar Transação</h3>
+                </div>
+
+                <div class="p-6">
+                    <form id="form-edit-transaction" method="POST" class="flex flex-col gap-4">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
+                                <input type="number" name="value" id="edit_transaction_value" step="0.01" required
+                                    class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                            <input type="date" name="date" id="edit_transaction_date" required
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                            <div class="relative">
+                                <select name="category_id" id="edit_transaction_category" required
+                                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                                    {% for cat in categories %} <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-3 mt-4">
+                            <button type="button" onclick="closeEditTransactionModal()"
+                                class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-all shadow-md">
+                                Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditTransactionModal(actionUrl, value, date, categoryId) {
+        const modal = document.getElementById('modal-edit-transaction');
+        const backdrop = document.getElementById('backdrop-edit-transaction');
+        const panel = document.getElementById('panel-edit-transaction');
+        
+        // 1. Preencher os campos com os dados recebidos
+        document.getElementById('form-edit-transaction').action = actionUrl;
+        document.getElementById('edit_transaction_value').value = value;
+        document.getElementById('edit_transaction_date').value = date;
+        document.getElementById('edit_transaction_category').value = categoryId; // O Select seleciona automagicamente pelo ID
+
+        // 2. Abrir Modal
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+            panel.classList.remove('opacity-0', 'scale-95');
+            panel.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    }
+
+    function closeEditTransactionModal() {
+        const modal = document.getElementById('modal-edit-transaction');
+        const backdrop = document.getElementById('backdrop-edit-transaction');
+        const panel = document.getElementById('panel-edit-transaction');
+
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100');
+        panel.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+</script>

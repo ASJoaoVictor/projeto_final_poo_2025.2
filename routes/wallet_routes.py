@@ -48,4 +48,5 @@ def delete_wallet(wallet_id):
     if not wallet:
         return "Carteira não encontrada ou acesso negado", 404
     
-    return "Carteira desativada com sucesso!"
+    flash("Carteira desativada com sucesso!", "success")
+    return redirect(url_for("main_bp.dashboard_page"))

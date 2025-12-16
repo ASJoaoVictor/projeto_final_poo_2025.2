@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title if title else 'FinanceApp' }}</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .success {
+                /* Aqui usamos o @apply para agrupar as classes do Tailwind */
+                @apply flex items-center justify-between p-3 rounded-lg text-sm text-center border bg-green-100 text-green-700 border-green-300;
+            }
+            .error {
+                @apply flex items-center justify-between p-3 rounded-lg text-sm text-center border bg-red-100 text-red-700 border-red-300;
+            }
+
+            .warning {
+                @apply flex items-center justify-between p-3 rounded-lg text-sm text-center border bg-yellow-100 text-yellow-700 border-yellow-300;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-md p-4">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+
+            <!-- Logo -->
+            <div class="text-xl font-bold text-purple-600">
+                FinanceApp
+            </div>
+
+            <!-- NAV -->
+            <nav class="flex items-center gap-5 text-gray-700">
+                <a href="/dashboard" class="hover:text-purple-600 transition">Dashboard</a>
+                <a href="/wallet/new" class="hover:text-purple-600 transition">Nova carteira</a>
+                <a href="/transaction/new" class="hover:text-purple-600 transition">Nova transação</a>
+                <a href="{{ url_for('category_bp.category_new_page') }}" class="hover:text-purple-600 transition">Categorias</a>
+
+                <a href="{{ url_for('auth_bp.logout') }}"
+                   class="text-red-600 font-medium hover:text-red-700 transition">
+                    Sair
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-5xl mx-auto py-10 px-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% include 'components/modal_confirm.html' %}
+
+    <script src="{{ url_for('static', filename='script/script.js') }}"></script>
+
+</body>
+</html>

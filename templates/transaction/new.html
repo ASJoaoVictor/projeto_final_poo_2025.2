@@ -1,14 +1,113 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova transação</title>
-</head>
-<body>
-    <h2>nova transação</h2>
-    <form action="{{url_for('transaction_bp.transaction_create')}}" method="post">
-        <button type="submit">Criar</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+{% set title = "Nova transação" %}
+
+{% block content %}
+
+<div class="w-full flex flex-col items-center pt-16 pb-24">
+
+    <h1 class="text-gray-800 text-3xl font-bold tracking-tight mb-8">
+        Nova Transação
+    </h1>
+
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-sm p-8 border border-gray-200">
+        
+        <form method="post" action="{{ url_for('transaction_bp.transaction_create') }}" class="flex flex-col gap-6">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Valor da transação</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">R$</span>
+                    <input type="number" name="value" step="0.01" placeholder="0.00" required
+                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-lg font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                </div>
+            </div>
+
+            <div>
+                <span class="block text-sm font-medium text-gray-700 mb-2">Tipo</span>
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="type" value="income" class="peer sr-only" required>
+                        <div class="flex items-center justify-center py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 font-medium transition-all
+                                    peer-checked:bg-green-50 peer-checked:border-green-500 peer-checked:text-green-700 hover:bg-white hover:shadow-md">
+                            Receita
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="type" value="expense" class="peer sr-only">
+                        <div class="flex items-center justify-center py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 font-medium transition-all
+                                    peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 hover:bg-white hover:shadow-md">
+                            Despesa
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Carteira</label>
+                    <div class="relative">
+                        <select name="wallet" required
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                            <option value="" disabled selected>Selecione...</option>
+                            {% for w in user_wallets %}
+                            <option value="{{ w.id }}">{{ w.wallet_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                    <div class="relative">
+                        <select name="category" required
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                            <option value="" disabled selected>Selecione...</option>
+                            {% for c in user_categories %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="sm:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Data</label>
+                    <input type="date" name="date" id="date" required
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descrição <span class="text-gray-400 font-normal">(opcional)</span></label>
+                    <input type="text" name="describe" placeholder="Ex: Mercado, Freelance..."
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                </div>
+            </div>
+
+            <button type="submit" 
+                class="mt-4 w-full py-3.5 rounded-xl bg-purple-600 text-white font-semibold shadow-md
+                       hover:bg-purple-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                Confirmar Transação
+            </button>
+            
+            <a href="{{ url_for('main_bp.dashboard_page') }}" class="text-center text-sm text-gray-500 hover:text-purple-600 transition-colors">
+                Cancelar e voltar
+            </a>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    const hoje = new Date().toISOString().split("T")[0];
+    document.getElementById("date").value = hoje;
+</script>
+
+{% endblock %}

@@ -19,17 +19,22 @@ class WalletController():
             wallet_name= wallet_name
         ).first()
 
-        if existing_wallet:
+        if existing_wallet and existing_wallet.is_active:
             return None
-  
+        
+        if existing_wallet:
+            wallet = existing_wallet
+            wallet.is_active = True
+            wallet.initial_balance = initial_balance
+        else:
+            wallet = Wallet(
+                wallet_name= wallet_name,
+                initial_balance= initial_balance,
+                user_id= user_id
+            )
 
-        wallet = Wallet(
-            wallet_name= wallet_name,
-            initial_balance= initial_balance,
-            user_id= user_id
-        )
-
-        db.session.add(wallet)
+            db.session.add(wallet)
+            
         db.session.commit()
 
         category = SystemCategory.query.filter_by(name= "Depósito inicial").first()
@@ -70,6 +75,7 @@ class WalletController():
             return None
         
         wallet.is_active = False
+        wallet.current_balance = 0
         db.session.commit()
 
         return wallet

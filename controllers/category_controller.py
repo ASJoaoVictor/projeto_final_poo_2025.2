@@ -8,18 +8,8 @@ class CategoryController():
         pass
 
     @staticmethod
-    def get_category_by_name(name):
-        category =  SystemCategory.query.filter_by(name= name).first()
-
-        if category:
-            return category
-        
-        category = UserCategory.query.filter_by(name= name).first()
-
-        if category:
-            return category
-        
-        return None
+    def get_user_categories(user_id):
+        return UserCategory.query.filter_by(user_id= user_id).all()
 
 
 
