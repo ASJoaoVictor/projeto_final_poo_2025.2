@@ -80,7 +80,7 @@
                     
                     <button type="button" 
                         onclick="openConfirmModal(
-                            '#', 
+                            '{{ url_for('transaction_bp.delete_transaction', transaction_id=transaction.id) }}',
                             'Excluir Transação', 
                             'Tem certeza que deseja apagar a transação de R$ {{ transaction.value }}? O saldo da carteira será atualizado.'
                         )"

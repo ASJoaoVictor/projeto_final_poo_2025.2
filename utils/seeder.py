@@ -5,7 +5,7 @@ from extensions import db
 def seed_system_categories():  
     default_categories = [
         "Depósito inicial",
-        "Saque final",
+        "Fechamento de carteira",
     ]
 
     for cat_name in default_categories:

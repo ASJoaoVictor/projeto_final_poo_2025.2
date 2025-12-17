@@ -59,9 +59,34 @@ class TransactionController():
     @staticmethod
     def get_transactions_by_wallet(wallet_id):
         # Mudamos de .asc() para .desc()
-        print(Transaction.query.filter_by(wallet_id=wallet_id).order_by(Transaction.created_at.desc()).all())
         return Transaction.query.filter_by(wallet_id=wallet_id).order_by(Transaction.created_at.desc()).all()
 
     @staticmethod
     def get_transactions_by_user(user_id):
         pass
+
+    @staticmethod
+    def delete_transaction(transaction_id, user_id):
+        transaction = Transaction.query.filter_by(id= transaction_id).first()
+
+        if not transaction:
+            return False
+        
+        wallet = Wallet.query.filter_by(
+            id= transaction.wallet_id,
+            user_id= user_id,
+            is_active= True
+        ).first()
+
+        if not wallet:
+            return False
+
+        if transaction.transaction_type == "income":
+            wallet.current_balance -= transaction.value
+        else:
+            wallet.current_balance += transaction.value
+
+        db.session.delete(transaction)
+        db.session.commit()
+
+        return True

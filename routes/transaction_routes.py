@@ -39,10 +39,20 @@ def transaction_create():
         return redirect(url_for("main_bp.dashboard_page"))
 
     flash("Não foi possível criar a transação", "warning")
-    return redirect(url_for("main_bp.dashboard_page"))
     return redirect(url_for("transaction_bp.transaction_new_page"))
 
 
 @transaction_bp.route("/edit")
 def transaction_edit():
     return "Em desenvolvimento"
+
+@transaction_bp.route("/<int:transaction_id>/delete", methods=["POST"])
+def delete_transaction(transaction_id):
+    transaction = TransactionController.delete_transaction(transaction_id, current_user.id)
+
+    if not transaction:
+        flash("Não foi possível deletar a transação", "warning")
+        return redirect(url_for("main_bp.dashboard_page"))
+    
+    flash("Transação deletada com sucesso!", "success")
+    return redirect(url_for("main_bp.dashboard_page"))

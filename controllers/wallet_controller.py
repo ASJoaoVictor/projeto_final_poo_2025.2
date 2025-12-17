@@ -74,10 +74,18 @@ class WalletController():
         if not wallet:
             return None
         
-        wallet.is_active = False
-        wallet.current_balance = 0
-        db.session.commit()
+        if wallet.current_balance > 0:
+            TransactionController.create_transaction(
+                transaction_type= "expense",
+                value= wallet.current_balance,
+                wallet_id= wallet.id,
+                category_id= SystemCategory.query.filter_by(name= "Depósito inicial").first().id,
+                user_id= user_id,
+                description= "Fechamento de carteira"
+            )
 
+        wallet.is_active = False
+        db.session.commit()
         return wallet
     
     @staticmethod
