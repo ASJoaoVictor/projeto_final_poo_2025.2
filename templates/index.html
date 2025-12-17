@@ -36,7 +36,7 @@
 
             <p class="text-sm text-gray-500 mb-1">Saldo atual</p>
             <p class="text-3xl font-bold mb-4">
-                R$ {{ wallet.current_balance }}
+                R$ {{ "%.2f"|format(wallet.current_balance) }}
             </p>
 
             <span class="text-purple-600 text-sm font-medium hover:underline">

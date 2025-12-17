@@ -26,7 +26,7 @@
                 <span class="block text-sm font-medium text-gray-700 mb-2">Tipo</span>
                 <div class="grid grid-cols-2 gap-4">
                     <label class="cursor-pointer">
-                        <input type="radio" name="type" value="income" class="peer sr-only" required>
+                        <input type="radio" name="transaction_type" value="income" class="peer sr-only" required>
                         <div class="flex items-center justify-center py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 font-medium transition-all
                                     peer-checked:bg-green-50 peer-checked:border-green-500 peer-checked:text-green-700 hover:bg-white hover:shadow-md">
                             Receita
@@ -34,7 +34,7 @@
                     </label>
 
                     <label class="cursor-pointer">
-                        <input type="radio" name="type" value="expense" class="peer sr-only">
+                        <input type="radio" name="transaction_type" value="expense" class="peer sr-only">
                         <div class="flex items-center justify-center py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 font-medium transition-all
                                     peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 hover:bg-white hover:shadow-md">
                             Despesa
@@ -47,7 +47,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Carteira</label>
                     <div class="relative">
-                        <select name="wallet" required
+                        <select name="wallet_id" required
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
                             <option value="" disabled selected>Selecione...</option>
                             {% for w in user_wallets %}
@@ -63,7 +63,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
                     <div class="relative">
-                        <select name="category" required
+                        <select name="category_id" required
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
                             <option value="" disabled selected>Selecione...</option>
                             {% for c in user_categories %}

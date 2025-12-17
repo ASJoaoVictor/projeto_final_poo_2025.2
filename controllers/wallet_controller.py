@@ -44,7 +44,7 @@ class WalletController():
 
         if initial_balance > 0:
             TransactionController.create_transaction(
-                type= "income",
+                transaction_type= "income",
                 value= initial_balance,
                 wallet_id= wallet.id,
                 category_id= category.id,
@@ -76,6 +76,21 @@ class WalletController():
         
         wallet.is_active = False
         wallet.current_balance = 0
+        db.session.commit()
+
+        return wallet
+    
+    @staticmethod
+    def edit_wallet(wallet_id, new_name, new_initial_balance, user_id):
+        wallet = Wallet.query.filter_by(
+            id= wallet_id,
+            user_id= user_id
+        ).first()
+
+        if not wallet:
+            return None
+
+        wallet.wallet_name = new_name
         db.session.commit()
 
         return wallet

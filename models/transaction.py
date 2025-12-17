@@ -8,7 +8,7 @@ class Transaction(db.Model):
     transaction_type = db.Column(db.String(20), nullable= False)
     value = db.Column(db.Float, nullable= False)
     created_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
-    describe = db.Column(db.String(100), nullable= True)
+    description = db.Column(db.String(100), nullable= True)
 
     wallet_id = db.Column(db.Integer, db.ForeignKey("wallets.id"), nullable= False)
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable= False)

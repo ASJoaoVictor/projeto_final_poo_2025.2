@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from controllers.wallet_controller import WalletController
 from controllers.transaction_controller import TransactionController
+from controllers.category_controller import CategoryController
 from flask_login import login_required, current_user
 
 wallet_bp = Blueprint("wallet_bp", __name__, url_prefix="/wallet")
@@ -13,7 +14,7 @@ def wallet_new_page():
 @wallet_bp.route("/create", methods=["POST"])
 @login_required
 def create_wallet():
-    wallet_name = request.form.get("wallet_name")
+    wallet_name = request.form.get("wallet_name").capitalize()
     initial_balance = request.form.get("initial_balance")
 
     wallet = WalletController.create_wallet(wallet_name, initial_balance, current_user.id)
@@ -30,8 +31,9 @@ def create_wallet():
 @login_required
 def wallet_detail_page(wallet_id):
     wallet = WalletController.get_wallet_by_id(wallet_id)
-    #transactions = TransactionController.get_transactions_by_wallet(wallet_id)
-    transactions = wallet.transactions
+    transactions = TransactionController.get_transactions_by_wallet(wallet_id)
+    #transactions = wallet.transactions
+    categories = CategoryController.get_user_categories(user_id=current_user.id)
 
     if not wallet:
         return "Carteira não encontrada", 404
@@ -39,7 +41,7 @@ def wallet_detail_page(wallet_id):
     if wallet.user_id != current_user.id:
         return "Acesso negado", 403
     
-    return render_template("wallet/detail.html", wallet= wallet, transactions= transactions)
+    return render_template("wallet/detail.html", wallet= wallet, transactions= transactions, categories= categories)
 
 @wallet_bp.route("/<int:wallet_id>/delete", methods=["GET", "POST"])
 def delete_wallet(wallet_id):
