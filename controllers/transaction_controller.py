@@ -71,6 +71,7 @@ class TransactionController():
 
         if not transaction:
             return False
+
         
         wallet = Wallet.query.filter_by(
             id= transaction.wallet_id,
@@ -80,6 +81,7 @@ class TransactionController():
 
         if not wallet:
             return False
+        
 
         if transaction.transaction_type == "income":
             wallet.current_balance -= transaction.value

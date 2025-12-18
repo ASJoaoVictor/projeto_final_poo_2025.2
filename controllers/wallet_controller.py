@@ -73,19 +73,29 @@ class WalletController():
 
         if not wallet:
             return None
-        
-        if wallet.current_balance > 0:
-            TransactionController.create_transaction(
-                transaction_type= "expense",
-                value= wallet.current_balance,
-                wallet_id= wallet.id,
-                category_id= SystemCategory.query.filter_by(name= "Depósito inicial").first().id,
-                user_id= user_id,
-                description= "Fechamento de carteira"
-            )
 
         wallet.is_active = False
         db.session.commit()
+        return wallet
+
+    @staticmethod  
+    def delete_wallet(wallet_id, user_id):
+        wallet = WalletController.get_wallet_by_id(wallet_id)
+
+        if not wallet:
+            return None
+        
+        if wallet.user_id != user_id:
+            return None
+        
+        transactions = TransactionController.get_transactions_by_wallet(wallet_id)
+
+        for transaction in transactions:
+            TransactionController.delete_transaction(transaction.id, user_id) # deleta todas as transações da carteira
+
+        db.session.delete(wallet)
+        db.session.commit()
+
         return wallet
     
     @staticmethod

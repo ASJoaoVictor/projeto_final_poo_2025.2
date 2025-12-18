@@ -45,8 +45,9 @@ def wallet_detail_page(wallet_id):
 
 @wallet_bp.route("/<int:wallet_id>/delete", methods=["GET", "POST"])
 def delete_wallet(wallet_id):
-    wallet = WalletController.deactivate_wallet(wallet_id, current_user.id)
-
+    #wallet = WalletController.deactivate_wallet(wallet_id, current_user.id)
+    wallet = WalletController.delete_wallet(wallet_id, current_user.id)
+    
     if not wallet:
         return "Carteira não encontrada ou acesso negado", 404
     
