@@ -27,11 +27,11 @@
         <button type="button" 
             onclick="openConfirmModal(
                 '{{ url_for('wallet_bp.delete_wallet', wallet_id=wallet.id) }}', 
-                'Desativar carteira', 
-                'Tem certeza que deseja desativar a carteira <strong>{{ wallet.wallet_name }}</strong>? Você não poderá realizar novas transações nela.'
+                'Deletar carteira', 
+                'Tem certeza que deseja deletar a carteira <strong>{{ wallet.wallet_name }}</strong>? Você não poderá realizar novas transações nela e as transações serão perdidas.'
             )"
             class="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition">
-            Desativar
+            Deletar
         </button>
 
     </div>
