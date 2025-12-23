@@ -51,5 +51,20 @@ def delete_wallet(wallet_id):
     if not wallet:
         return "Carteira não encontrada ou acesso negado", 404
     
-    flash("Carteira desativada com sucesso!", "success")
+    flash("Carteira deletada com sucesso!", "success")
     return redirect(url_for("main_bp.dashboard_page"))
+
+@wallet_bp.route("/<int:wallet_id>/edit", methods=["POST"])
+@login_required
+def edit_wallet(wallet_id):
+    wallet_name = request.form.get("wallet_name").capitalize()
+    #initial_balance = request.form.get("initial_balance")
+
+    wallet = WalletController.edit_wallet(wallet_id, wallet_name, current_user.id)
+
+    if wallet:
+        flash("Carteira atualizada com sucesso!", "success")
+        return redirect(url_for("wallet_bp.wallet_detail_page", wallet_id=wallet_id))
+    
+    flash("Não foi possível atualizar a carteira", "warning")
+    return redirect(url_for("wallet_bp.wallet_detail_page", wallet_id=wallet_id))

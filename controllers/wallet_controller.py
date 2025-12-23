@@ -99,7 +99,7 @@ class WalletController():
         return wallet
     
     @staticmethod
-    def edit_wallet(wallet_id, new_name, new_initial_balance, user_id):
+    def edit_wallet(wallet_id, new_name, user_id):
         wallet = Wallet.query.filter_by(
             id= wallet_id,
             user_id= user_id

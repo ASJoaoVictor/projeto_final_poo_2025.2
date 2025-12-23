@@ -92,3 +92,24 @@ class TransactionController():
         db.session.commit()
 
         return True
+
+    @staticmethod
+    def edit_transaction(transaction_id, user_id):
+        transaction = Transaction.query.filter_by(id= transaction_id).first()
+        if not transaction:
+            return False
+        wallet = Wallet.query.filter_by(
+            id= transaction.wallet_id, 
+            user_id= user_id, 
+            is_active= True).first()
+        
+        if not wallet:
+            return False
+        
+        if transaction.transaction_type == "income":
+            wallet.current_balance -= transaction.value
+        else:
+            wallet.current_balance += transaction.value  
+
+        db.session.commit()
+        return True

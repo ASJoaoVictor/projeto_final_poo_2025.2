@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="text-left pt-4">
+    <a href="{{ url_for('main_bp.dashboard_page') }}" class="text-sm text-gray-500 hover:text-purple-600 transition-colors">
+            ← Voltar ao Dashboard
+    </a>
+</div>
 
 <h1 class="text-2xl font-semibold text-gray-700 mb-6">
     {{ wallet.wallet_name }}
@@ -19,7 +24,7 @@
     <!-- botoes -->
     <div class="flex gap-4">
 
-        <button id="openEditWalletModal" onclick="openEditWalletModal('3', '{{wallet.wallet_name}}')"
+        <button id="openEditWalletModal" onclick="openEditWalletModal('{{url_for('wallet_bp.edit_wallet', wallet_id=wallet.id)}}', '{{wallet.wallet_name}}')"
                 class="px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700 transition">
             Editar
         </button>
