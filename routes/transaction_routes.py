@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from controllers.wallet_controller import WalletController
 from controllers.category_controller import CategoryController
 from controllers.transaction_controller import TransactionController
+from datetime import datetime
 
 
 transaction_bp = Blueprint("transaction_bp", __name__, url_prefix="/transaction")
@@ -17,12 +18,13 @@ def transaction_new_page():
 @transaction_bp.route("/create", methods=["POST"])
 def transaction_create():
     value = request.form.get("value")
-    date = request.form.get("date")
+    date_str = request.form.get("date")
     description = request.form.get("description")
     wallet_id = request.form.get("wallet_id")
     category_id = request.form.get("category_id")
     transaction_type = request.form.get("transaction_type")
 
+    date = datetime.strptime(date_str, "%Y-%m-%d")
     print("Creating transaction:", value, date, description, wallet_id, category_id, transaction_type)
     transaction = TransactionController.create_transaction(
         value=value,
@@ -56,3 +58,28 @@ def delete_transaction(transaction_id):
     
     flash("Transação deletada com sucesso!", "success")
     return redirect(url_for("main_bp.dashboard_page"))
+
+@transaction_bp.route("/<int:transaction_id>/edit", methods=["POST"])
+@login_required
+def edit_transaction(transaction_id):
+    value = request.form.get("value")
+    date_str = request.form.get("date")
+    description = request.form.get("description")
+    category_id = request.form.get("category_id")
+
+    date = datetime.strptime(date_str, "%Y-%m-%d")
+    transaction = TransactionController.edit_transaction(
+        transaction_id=transaction_id,
+        value=value,
+        created_at=date,
+        description=description,
+        category_id=category_id,
+        user_id=current_user.id
+    )
+
+    if not transaction:
+        flash("Não foi possível editar a transação", "warning")
+        return redirect(url_for("main_bp.dashboard_page"))
+    print("Transaction:", transaction.wallet_id)
+    flash("Transação editada com sucesso!", "success")
+    return redirect(url_for("wallet_bp.wallet_detail_page", wallet_id=transaction.wallet_id))

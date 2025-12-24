@@ -30,6 +30,12 @@
                         </div>
 
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                            <input type="text" name="description" id="edit_transaction_description"
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
                             <div class="relative">
                                 <select name="category_id" id="edit_transaction_category" required
@@ -62,7 +68,7 @@
 </div>
 
 <script>
-    function openEditTransactionModal(actionUrl, value, date, categoryId) {
+    function openEditTransactionModal(actionUrl, value, date, description, categoryId) {
         const modal = document.getElementById('modal-edit-transaction');
         const backdrop = document.getElementById('backdrop-edit-transaction');
         const panel = document.getElementById('panel-edit-transaction');
@@ -71,6 +77,7 @@
         document.getElementById('form-edit-transaction').action = actionUrl;
         document.getElementById('edit_transaction_value').value = value;
         document.getElementById('edit_transaction_date').value = date;
+        document.getElementById('edit_transaction_description').value = description == "None" ? '' : description;
         document.getElementById('edit_transaction_category').value = categoryId; // O Select seleciona automagicamente pelo ID
 
         // 2. Abrir Modal

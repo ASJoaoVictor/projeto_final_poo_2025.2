@@ -42,7 +42,7 @@ class TransactionController():
             wallet_id= wallet_id,
             category_id= category_id,
             description= description,
-            #created_at= created_at
+            created_at= created_at
         )
 
         if transaction_type == "income":
@@ -94,22 +94,45 @@ class TransactionController():
         return True
 
     @staticmethod
-    def edit_transaction(transaction_id, user_id):
+    def edit_transaction(transaction_id, value, created_at, description, category_id, user_id):
         transaction = Transaction.query.filter_by(id= transaction_id).first()
+
+        try:
+            value = float(value)
+        except:
+            return False
+
         if not transaction:
             return False
+
+        wallet_id = transaction.wallet_id
+
         wallet = Wallet.query.filter_by(
-            id= transaction.wallet_id, 
-            user_id= user_id, 
-            is_active= True).first()
-        
+            id= wallet_id,
+            user_id= user_id,
+            is_active= True
+        ).first()   
+
         if not wallet:
             return False
         
         if transaction.transaction_type == "income":
             wallet.current_balance -= transaction.value
+        else:        
+            wallet.current_balance += transaction.value
+
+        if transaction.transaction_type == "expense" and wallet.current_balance < value:
+            return False
+        
+        transaction.value = value
+        transaction.created_at = created_at
+        transaction.description = description
+        transaction.category_id = category_id
+        
+        if transaction.transaction_type == "income":
+            wallet.current_balance += transaction.value
         else:
-            wallet.current_balance += transaction.value  
+            wallet.current_balance -= transaction.value  
 
         db.session.commit()
-        return True
+        return transaction
