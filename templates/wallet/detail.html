@@ -50,68 +50,72 @@
 <!-- LISTA DE TRANSAÇÕES -->
 <ul class="bg-white shadow-sm rounded-xl border border-gray-200 divide-y">
 
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="font-bold text-gray-800">Transações Recentes</h3>
+        </div>
+
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                    <th class="px-6 py-3 font-medium">Descrição</th>
+                    <th class="px-6 py-3 font-medium">Valor</th>
+                    <th class="px-6 py-3 font-medium">Data</th>
+                    <th class="px-6 py-3 font-medium text-right">Ações</th>
+                </tr>
+            </thead>
     {% if transactions %}
         {% for transaction in transactions %}
-            <li class="p-4 flex items-center justify-between">
-
-                <!-- Categoria -->
-                <span class="text-gray-600 font-medium">
-                    {{ transaction.category.name }}
-                </span>
-
-                <!-- Valor -->
-                <span class="{% if transaction.transaction_type == 'income' %}text-green-600{% else %}text-red-600{% endif %} font-semibold">
-                    R$ {{ "%.2f"|format(transaction.value) }}
-                </span>
-
-                <!-- Data -->
-                <span class="text-gray-500 text-sm">
-                    {{ transaction.created_at.strftime('%d/%m/%Y') if transaction.created_at else "Sem data" }}
-                </span>
-
-                <!-- Ações -->
-                <div class="flex gap-3 text-sm">
-                    <button 
-                        type="button"
-                        class="text-purple-600 hover:underline"
-                        onclick="openEditTransactionModal(
-                            '{{ url_for('transaction_bp.edit_transaction', transaction_id=transaction.id) }}',
-                            '{{transaction.value}}',
-                            '{{ transaction.created_at.strftime('%Y-%m-%d') if transaction.created_at else '' }}',
-                            '{{transaction.description}}',
-                            '{{transaction.category_id}}'
-                        )"
-                        {% if transaction.category.type == 'system' %} disabled {% endif %}>
-                        Editar
-                    </button>
-                    
-                    <button type="button" 
-                        onclick="openConfirmModal(
+            <tbody class="divide-y divide-gray-100">
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">
+                        <p class="text-sm font-medium text-gray-900">{{transaction.category.name}}</p>
+                        <p class="text-xs text-gray-500">{{transaction.description if transaction.description else "Sem descrição"}}</p> 
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if transaction.transaction_type == 'income' %}
+                        <span class="text-sm font-bold text-green-600">R$ {{ "%.2f"|format(transaction.value) }}</span>
+                        {% else %}
+                        <span class="text-sm font-bold text-red-600">-R$ {{ "%.2f"|format(transaction.value) }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">
+                        {{ transaction.created_at.strftime('%d/%m/%Y') if transaction.created_at else "Sem data" }}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button class="text-purple-600 hover:text-blue-700 mr-3" 
+                            title="Editar"
+                            onclick="openEditTransactionModal(
+                                '{{ url_for('transaction_bp.edit_transaction', transaction_id=transaction.id) }}',
+                                '{{transaction.value}}',
+                                '{{ transaction.created_at.strftime('%Y-%m-%d') if transaction.created_at else '' }}',
+                                '{{transaction.description}}',
+                                '{{transaction.category_id}}'
+                            )"
+                            {% if transaction.category.type == 'system' %} disabled {% endif %}>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700" 
+                            title="Deletar"
+                            onclick="openConfirmModal(
                             '{{ url_for('transaction_bp.delete_transaction', transaction_id=transaction.id) }}',
                             'Excluir Transação', 
                             'Tem certeza que deseja apagar a transação de R$ {{ transaction.value }}? O saldo da carteira será atualizado.'
-                        )"
-                        class="text-red-600 hover:text-red-800 hover:underline transition-colors font-medium text-sm flex items-center gap-1"
-                        {% if transaction.category.type == 'system' %} disabled {% endif %}>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        Deletar
-                    </button>
-                </div>
-
-                
-            </li>
-            <!-- MODAL -->
-            
-            
-        </li>
-        
-        
+                            )"
+                            class="text-red-600 hover:text-red-800 hover:underline transition-colors font-medium text-sm flex items-center gap-1"
+                            {% if transaction.category.type == 'system' %} disabled {% endif %}>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </td>
+                </tr>
+                            
         {% endfor %}
-        {% else %}
+    {% else %}
         <li class="p-4 text-gray-500 text-center">Nenhuma transação encontrada</li>
-        {% endif %}
-        
-    </ul>
+    {% endif %}
+            </tbody>
+        </table>
+    </div>
     
 {% include "transaction/modal_edit.html" %}
 {% include "wallet/modal_edit.html" %}
