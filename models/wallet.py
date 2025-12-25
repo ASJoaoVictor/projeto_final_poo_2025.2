@@ -14,7 +14,5 @@ class Wallet(db.Model):
     #chave FK
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable= False)
 
-    transactions = db.relationship("Transaction", backref="wallets", lazy= True)
-
     def __repr__(self):
         return f"<Wallet {self.wallet_name}>"

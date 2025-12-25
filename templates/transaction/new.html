@@ -97,7 +97,7 @@
                 Confirmar Transação
             </button>
             
-            <a href="{{ url_for('main_bp.dashboard_page') }}" class="text-center text-sm text-gray-500 hover:text-purple-600 transition-colors">
+            <a href="{{ request.referrer }}" class="text-center text-sm text-gray-500 hover:text-purple-600 transition-colors">
                 Cancelar e voltar
             </a>
 

@@ -6,7 +6,7 @@ from models.category import UserCategory, SystemCategory
 class TransactionController():
     
     @staticmethod
-    def create_transaction(transaction_type, value, wallet_id, category_id, user_id, description=None, created_at=None):
+    def create_transaction(transaction_type, value, wallet_id, category_id, user_id, description="", created_at=None):
         try:
             value = float(value)
         except:
@@ -62,8 +62,8 @@ class TransactionController():
         return Transaction.query.filter_by(wallet_id=wallet_id).order_by(Transaction.created_at.desc()).all()
 
     @staticmethod
-    def get_transactions_by_user(user_id):
-        pass
+    def get_user_transactions(user_id):
+        return Transaction.query.join(Wallet).filter(Wallet.user_id == user_id).order_by(Transaction.created_at.desc()).all()
 
     @staticmethod
     def delete_transaction(transaction_id, user_id):

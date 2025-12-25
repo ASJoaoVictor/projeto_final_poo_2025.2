@@ -44,9 +44,6 @@
 </div>
 
 
-<!-- Título -->
-<h2 class="text-xl text-gray-700 font-medium mb-4">Transações</h2>
-
 <!-- LISTA DE TRANSAÇÕES -->
 <ul class="bg-white shadow-sm rounded-xl border border-gray-200 divide-y">
 
@@ -69,8 +66,14 @@
             <tbody class="divide-y divide-gray-100">
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4">
-                        <p class="text-sm font-medium text-gray-900">{{transaction.category.name}}</p>
-                        <p class="text-xs text-gray-500">{{transaction.description if transaction.description else "Sem descrição"}}</p> 
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ transaction.description if transaction.description else "Sem descrição" }}
+                        </p>
+                        
+                        <p class="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            {{ transaction.category.name }}
+                        </p> 
                     </td>
                     <td class="px-6 py-4">
                         {% if transaction.transaction_type == 'income' %}
@@ -83,7 +86,7 @@
                         {{ transaction.created_at.strftime('%d/%m/%Y') if transaction.created_at else "Sem data" }}
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <button class="text-purple-600 hover:text-blue-700 mr-3" 
+                        <button class="text-purple-600 hover:text-purple-700 mr-3" 
                             title="Editar"
                             onclick="openEditTransactionModal(
                                 '{{ url_for('transaction_bp.edit_transaction', transaction_id=transaction.id) }}',
@@ -110,12 +113,15 @@
                 </tr>
                             
         {% endfor %}
-    {% else %}
-        <li class="p-4 text-gray-500 text-center">Nenhuma transação encontrada</li>
-    {% endif %}
             </tbody>
         </table>
     </div>
+    {% else %}
+            </tbody>
+        </table>
+    </div>
+        <p class="p-4 text-gray-500 text-center">Nenhuma transação encontrada</p>
+    {% endif %}
     
 {% include "transaction/modal_edit.html" %}
 {% include "wallet/modal_edit.html" %}
