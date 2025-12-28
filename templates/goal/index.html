@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Minhas Metas 🎯</h1>
+            <p class="text-gray-500">Acompanhamento mensal do seu orçamento (Dados Fictícios).</p>
+        </div>
+        
+        <a href="#" class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Nova Meta
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        {% for item in goals_data %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow h-full">
+            
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ item.name }}</h3>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 mt-1">
+                        {{ item.category_name }}
+                    </span>
+                </div>
+                
+                {% if item.real_percentage >= 100 %}
+                    <div class="text-red-500 bg-red-50 p-2 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                {% elif item.real_percentage >= 75 %}
+                    <div class="text-yellow-500 bg-yellow-50 p-2 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                {% else %}
+                    <div class="text-green-500 bg-green-50 p-2 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4 space-y-1">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Gasto Atual</span>
+                    <span class="font-bold text-gray-900">R$ {{ "%.2f"|format(item.current) }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Meta (Teto)</span>
+                    <span class="font-medium text-gray-600">R$ {{ "%.2f"|format(item.target) }}</span>
+                </div>
+            </div>
+
+            <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-3">
+                <div class="absolute top-0 left-0 h-full rounded-full transition-all duration-500
+                            {{ 'bg-red-500' if item.real_percentage >= 100 else 
+                               ('bg-yellow-400' if item.real_percentage >= 75 else 'bg-green-500') }}" 
+                     style="width: {{ item.percentage }}%">
+                </div>
+            </div>
+
+            <div class="text-right text-xs font-semibold">
+                {% if item.remaining >= 0 %}
+                    <span class="text-gray-400">Disponível: </span>
+                    <span class="text-green-600 text-sm">R$ {{ "%.2f"|format(item.remaining) }}</span>
+                {% else %}
+                    <span class="text-red-500">Excedido em R$ {{ "%.2f"|format(item.remaining | abs) }}</span>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

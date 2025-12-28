@@ -8,7 +8,7 @@ from datetime import datetime
 
 transaction_bp = Blueprint("transaction_bp", __name__, url_prefix="/transaction")
 
-@transaction_bp.route("/", methods=["GET"])
+@transaction_bp.route("", methods=["GET"])
 @login_required
 def transaction_page():
     transactions = TransactionController.get_user_transactions(user_id=current_user.id)

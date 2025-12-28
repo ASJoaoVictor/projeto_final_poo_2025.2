@@ -4,6 +4,7 @@ from routes.main_routes import main_bp
 from routes.wallet_routes import wallet_bp
 from routes.transaction_routes import transaction_bp
 from routes.category_routes import category_bp
+from routes.goal_routes import goal_bp
 from extensions import db, login_manager
 from models.user import User
 from utils import seeder
@@ -34,6 +35,7 @@ def create_app():
     app.register_blueprint(wallet_bp)
     app.register_blueprint(transaction_bp)
     app.register_blueprint(category_bp)
+    app.register_blueprint(goal_bp)
 
     @app.route("/")
     def default():
