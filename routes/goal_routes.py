@@ -11,7 +11,7 @@ goal_bp = Blueprint("goal_bp", __name__, url_prefix="/goal")
 @login_required
 def goal_index_page():
     #Verificar prazos das metas
-    GoalController.verificar(current_user.id)
+    GoalController.check_expired_goals(current_user.id)
 
     categories = CategoryController.get_user_categories(current_user.id)
     goals = GoalController.get_goals_by_user(current_user.id)

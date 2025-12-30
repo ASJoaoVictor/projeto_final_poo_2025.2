@@ -48,11 +48,11 @@ class GoalController():
         return goals
 
     @staticmethod
-    def verificar(user_id):
+    def check_expired_goals(user_id):
         goals = GoalController.get_goals_by_user(user_id)
         today = datetime.today().date()
 
         for goal in goals:
-            if goal.deadline <= today:
+            if goal.deadline <= today and goal.is_active:
                 goal.is_active = False
-                db.session.commit()
+        db.session.commit()
