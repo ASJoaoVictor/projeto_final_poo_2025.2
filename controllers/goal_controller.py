@@ -72,3 +72,25 @@ class GoalController():
         db.session.commit()
 
         return True
+    
+    @staticmethod
+    def edit_goal(goal_id, user_id, new_name, new_target_amount):
+        goal = Goal.query.filter_by(
+            id= goal_id,
+            user_id= user_id,
+            is_active= True
+        ).first()
+
+        if not goal:
+            return None
+        
+        try:
+            new_target_amount = float(new_target_amount)
+        except:
+            return None
+
+        goal.goal_name = new_name
+        goal.target_amount = new_target_amount
+        db.session.commit()
+
+        return goal

@@ -67,7 +67,11 @@
             <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
                 
                 <div class="flex space-x-2">
-                    <button onclick="openEditGoalModal('{{ item.id }}')" 
+                    <button onclick="openEditGoalModal(
+                                '{{ url_for('goal_bp.edit_goal', goal_id=item.id) }}',
+                                '{{ item.id }}', 
+                                '{{ item.name }}', 
+                                '{{ item.target }}')" 
                             class="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                             title="Editar Meta">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,4 +109,5 @@
     </div>
 </div>
 {% include 'goal/modal_create.html' %}
+{% include 'goal/modal_edit.html' %}
 {% endblock %}

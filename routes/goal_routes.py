@@ -26,7 +26,7 @@ def goal_index_page():
                     current_amount += transaction.value
         else:
             for transaction in TransactionController.get_user_transactions(current_user.id):
-                if transaction.transaction_type == "expense":
+                if transaction.transaction_type == "expense" and transaction.created_at >= goal.created_at:
                     current_amount += transaction.value
         goals_data.append({
             'id': goal.id,
@@ -89,4 +89,20 @@ def delete_goal(goal_id):
         return redirect(url_for("goal_bp.goal_index_page"))
     
     flash("Meta deletada com sucesso!", "success")
+    return redirect(url_for("goal_bp.goal_index_page"))
+
+@goal_bp.route("/edit/<int:goal_id>", methods=["POST"])
+@login_required
+def edit_goal(goal_id):
+    user_id = current_user.id
+    new_name = request.form.get("edit_goal_name").capitalize()
+    new_target_amount = request.form.get("edit_target_amount")
+
+    goal = GoalController.edit_goal(goal_id, user_id, new_name, new_target_amount)
+
+    if not goal:
+        flash("Erro ao editar a meta. Verifique se a meta existe ou se o valor é válido.", "error")
+        return redirect(url_for("goal_bp.goal_index_page"))
+    
+    flash("Meta editada com sucesso!", "success")
     return redirect(url_for("goal_bp.goal_index_page"))
