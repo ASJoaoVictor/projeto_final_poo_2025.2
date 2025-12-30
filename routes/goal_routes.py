@@ -1,43 +1,77 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+from controllers.goal_controller import GoalController
+from controllers.category_controller import CategoryController
+from controllers.transaction_controller import TransactionController
+from datetime import datetime, timedelta
 
 goal_bp = Blueprint("goal_bp", __name__, url_prefix="/goal")
 
 @goal_bp.route("/", methods=["GET"])
+@login_required
 def goal_index_page():
-# --- DADOS FICTÍCIOS (MOCK) ---
-    # Simulando o que viria do banco de dados jpa calculado
-    goals_data = [
-        {
-            'name': 'Economia Mercado',
-            'category_name': 'Alimentação',
-            'current': 450.00,
-            'target': 1000.00,
-            'percentage': 45,       # (450/1000) * 100
-            'real_percentage': 45,
-            'remaining': 550.00,
-            'status': 'safe'        # Verde
-        },
-        {
-            'name': 'Limitar Ifood e Pizza',
-            'category_name': 'Lazer',
-            'current': 480.00,
-            'target': 500.00,
-            'percentage': 96,
-            'real_percentage': 96,
-            'remaining': 20.00,
-            'status': 'warning'     # Amarelo (perto de estourar)
-        },
-        {
-            'name': 'Combustível do Mês',
-            'category_name': 'Transporte',
-            'current': 350.00,
-            'target': 300.00,
-            'percentage': 100,      # A barra visual trava em 100%
-            'real_percentage': 116, # O valor real passou
-            'remaining': -50.00,    # Negativo
-            'status': 'danger'      # Vermelho
-        }
-    ]
+    #Verificar prazos das metas
+    GoalController.verificar(current_user.id)
 
-    return render_template('goal/index.html', goals_data=goals_data)
+    categories = CategoryController.get_user_categories(current_user.id)
+    goals = GoalController.get_goals_by_user(current_user.id)
+
+    goals_data = []
+
+    for goal in goals:
+        current_amount = 0
+        if goal.category:
+            for transaction in goal.category.transactions:
+                if transaction.transaction_type == "expense" and transaction.created_at >= goal.created_at:
+                    current_amount += transaction.value
+        else:
+            for transaction in TransactionController.get_user_transactions(current_user.id):
+                if transaction.transaction_type == "expense":
+                    current_amount += transaction.value
+        goals_data.append({
+            'name': goal.goal_name,
+            'category_name': goal.category.name if goal.category else 'Sem Categoria',
+            'current': float(current_amount),
+            'target': float(goal.target_amount),
+            'percentage': min(int((current_amount / goal.target_amount) * 100), 100),
+            'real_percentage': int((current_amount / goal.target_amount) * 100),
+            'remaining': float(goal.target_amount - current_amount),
+            'status': 'safe' if current_amount <= goal.target_amount * 0.8 else
+                      'warning' if current_amount <= goal.target_amount else
+                      'danger'
+        })
+
+    return render_template('goal/index.html', 
+                           goals_data=goals_data,
+                           categories=categories)
+
+@goal_bp.route("/create", methods=["POST"])
+@login_required
+def create_goal():
+    goal_name = request.form.get("goal_name").capitalize()
+    target_amount = request.form.get("target_amount")
+    category_id = request.form.get("category_id")
+    user_id = current_user.id
+
+    duration = request.form.get("duration")
+
+    try:
+        duration = int(duration)
+    except:
+        flash("Duração inválida.", "error")
+        return redirect(url_for("goal_bp.goal_index_page"))
+
+    unit = request.form.get("unit")
+
+    real_unit = 1 if unit == "monthly" else 12
+    duration_in_month = duration * real_unit
+    deadline = datetime.now() + timedelta(days=30 * duration_in_month)
+
+    goal = GoalController.create_goal(goal_name, target_amount, deadline, user_id, category_id)
+
+    if not goal:
+        flash("Erro ao criar a meta. Verifique se já existe uma meta ativa com esse nome ou se o valor é válido.", "error")
+        return redirect(url_for("goal_bp.goal_index_page"))
+
+    flash("Meta criada com sucesso!", "success")
+    return redirect(url_for("goal_bp.goal_index_page"))

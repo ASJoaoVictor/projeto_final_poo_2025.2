@@ -49,6 +49,7 @@ class WalletController():
                 wallet_id= wallet.id,
                 category_id= category.id,
                 user_id= user_id,
+                description= "Depósito para abertura"
             )
 
         return wallet

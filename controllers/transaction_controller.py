@@ -59,11 +59,11 @@ class TransactionController():
     @staticmethod
     def get_transactions_by_wallet(wallet_id):
         # Mudamos de .asc() para .desc()
-        return Transaction.query.filter_by(wallet_id=wallet_id).order_by(Transaction.created_at.desc()).all()
+        return Transaction.query.filter_by(wallet_id=wallet_id).order_by(Transaction.created_at.desc()).order_by(Transaction.id.desc()).all()
 
     @staticmethod
     def get_user_transactions(user_id):
-        return Transaction.query.join(Wallet).filter(Wallet.user_id == user_id).order_by(Transaction.created_at.desc()).all()
+        return Transaction.query.join(Wallet).filter(Wallet.user_id == user_id).order_by(Transaction.created_at.desc()).order_by(Transaction.id.desc()).all()
 
     @staticmethod
     def delete_transaction(transaction_id, user_id):

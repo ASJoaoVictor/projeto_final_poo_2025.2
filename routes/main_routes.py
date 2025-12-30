@@ -10,5 +10,4 @@ def dashboard_page():
     wallets = WalletController.get_wallets_by_user(current_user.id)
 
     total_balance = sum(wallet.current_balance for wallet in wallets)
-    print(total_balance)
     return render_template("index.html", user= current_user, wallets= wallets, total_balance=total_balance)

@@ -6,13 +6,13 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Minhas Metas 🎯</h1>
-            <p class="text-gray-500">Acompanhamento mensal do seu orçamento (Dados Fictícios).</p>
+            <p class="text-gray-500">Acompanhamento mensal do seu orçamento.</p>
         </div>
-        
-        <a href="#" class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+
+        <button onclick="openCreateGoalModal()" class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Nova Meta
-        </a>
+        </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -76,4 +76,5 @@
 
     </div>
 </div>
+{% include 'goal/modal_create.html' %}
 {% endblock %}

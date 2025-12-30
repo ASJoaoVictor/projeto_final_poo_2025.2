@@ -1,0 +1,133 @@
+<div id="modal-create-goal" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    
+    <div id="backdrop-create-goal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeCreateGoalModal()"></div>
+
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            
+            <div id="panel-create-goal" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all duration-300 ease-out opacity-0 scale-95 sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+                
+                <div class="bg-white px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-800">Nova Meta Financeira</h3>
+                    <button onclick="closeCreateGoalModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <form action="{{ url_for('goal_bp.create_goal') }}" method="POST" class="flex flex-col gap-5">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Meta</label>
+                            <input type="text" name="goal_name" required placeholder="Ex: Economia Mercado"
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all placeholder-gray-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Valor Limite</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">R$</span>
+                                <input type="number" name="target_amount" step="0.01" required placeholder="0.00"
+                                    class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Duração</label>
+                                <input type="number" name="duration" value="1" min="1" required
+                                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Unidade</label>
+                                <div class="relative">
+                                    <select name="unit" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                                        <option value="monthly">Meses</option>
+                                        <option value="annual">Anos</option>
+                                    </select>
+                                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Categoria (Opcional)</label>
+                            <div class="relative">
+                                <select name="category_id" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                                    <option value="">Todas as Despesas (Geral)</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1.5">Deixe em "Todas" para controlar o orçamento total.</p>
+                        </div>
+
+                        <div class="flex justify-end gap-3 mt-2">
+                            <button type="button" onclick="closeCreateGoalModal()"
+                                class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all font-medium">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-6 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-all shadow-md font-medium hover:shadow-lg hover:-translate-y-0.5">
+                                Criar Meta
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openCreateGoalModal() {
+        const modal = document.getElementById('modal-create-goal');
+        const backdrop = document.getElementById('backdrop-create-goal');
+        const panel = document.getElementById('panel-create-goal');
+        
+        // 1. Remove hidden para o navegador renderizar
+        modal.classList.remove('hidden');
+        
+        // 2. Pequeno delay para permitir a transição CSS acontecer
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+            panel.classList.remove('opacity-0', 'scale-95');
+            
+            panel.classList.add('opacity-100', 'scale-100');
+        }, 10);
+
+        document.body.style.overflow = 'hidden'; // Trava rolagem do fundo
+    }
+
+    function closeCreateGoalModal() {
+        const modal = document.getElementById('modal-create-goal');
+        const backdrop = document.getElementById('backdrop-create-goal');
+        const panel = document.getElementById('panel-create-goal');
+
+        // 1. Inicia animação de saída
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100');
+        panel.classList.add('opacity-0', 'scale-95');
+
+        // 2. Espera a animação terminar (300ms do duration-300) antes de esconder
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Destrava rolagem
+        }, 300);
+    }
+
+    // Fechar com ESC
+    document.onkeydown = function(evt) {
+        if (evt.key === "Escape") {
+            closeCreateGoalModal();
+        }
+    };
+</script>

@@ -1,10 +1,35 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    <div class="mb-4 space-y-2">
+    <div class="fixed top-24 right-4 z-50 w-full max-w-md space-y-3 px-4 sm:px-0">
+        
         {% for category, message in messages %}
-        <div class="{{category}}">
-            {{ message }}
-        </div>
+            
+            {% if category == 'success' %}
+                {% set icon = 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' %}
+            {% elif category == 'error' %}
+                {% set icon = 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' %}
+            {% else %} 
+                {% set icon = 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' %}
+            {% endif %}
+
+            <div class="{{ category }} shadow-md transform transition-all hover:scale-[1.02] mb-2" role="alert">
+                
+                <div class="flex items-center gap-3 text-left">
+                    <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ icon }}"></path>
+                    </svg>
+                    <span class="font-medium">{{ message }}</span>
+                </div>
+
+                <button type="button" onclick="this.parentElement.remove()" class="ml-4 p-1 rounded hover:bg-black/10 transition-colors">
+                    <span class="sr-only">Fechar</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                
+            </div>
+
         {% endfor %}
     </div>
     {% endif %}

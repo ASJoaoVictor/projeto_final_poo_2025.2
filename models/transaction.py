@@ -7,7 +7,7 @@ class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key= True)
     transaction_type = db.Column(db.String(20), nullable= False)
     value = db.Column(db.Float, nullable= False)
-    created_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc).date())
+    created_at = db.Column(db.Date, default= lambda: datetime.now(timezone.utc).date())
     description = db.Column(db.String(100), nullable= True)
 
     wallet_id = db.Column(db.Integer, db.ForeignKey("wallets.id"), nullable= False)
