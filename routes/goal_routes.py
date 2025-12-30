@@ -29,6 +29,7 @@ def goal_index_page():
                 if transaction.transaction_type == "expense":
                     current_amount += transaction.value
         goals_data.append({
+            'id': goal.id,
             'name': goal.goal_name,
             'category_name': goal.category.name if goal.category else 'Sem Categoria',
             'current': float(current_amount),
@@ -74,4 +75,18 @@ def create_goal():
         return redirect(url_for("goal_bp.goal_index_page"))
 
     flash("Meta criada com sucesso!", "success")
+    return redirect(url_for("goal_bp.goal_index_page"))
+
+@goal_bp.route("/delete/<int:goal_id>", methods=["POST"])
+@login_required
+def delete_goal(goal_id):
+    user_id = current_user.id
+
+    success = GoalController.delete_goal(goal_id, user_id)
+
+    if not success:
+        flash("Erro ao deletar a meta.", "error")
+        return redirect(url_for("goal_bp.goal_index_page"))
+    
+    flash("Meta deletada com sucesso!", "success")
     return redirect(url_for("goal_bp.goal_index_page"))

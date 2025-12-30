@@ -56,3 +56,19 @@ class GoalController():
             if goal.deadline <= today and goal.is_active:
                 goal.is_active = False
         db.session.commit()
+
+    @staticmethod
+    def delete_goal(goal_id, user_id):
+        goal = Goal.query.filter_by(
+            id= goal_id,
+            user_id= user_id,
+            is_active= True
+        ).first()
+
+        if not goal:
+            return False
+        
+        goal.is_active = False
+        db.session.commit()
+
+        return True
