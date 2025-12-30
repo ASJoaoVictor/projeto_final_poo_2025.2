@@ -52,6 +52,11 @@ class CategoryController():
         if not category:
             return False
         
+        if category.goals:
+            return False
+
+        print("Deleting category:", category.goals)
+        
         db.session.delete(category)
         db.session.commit()
 
