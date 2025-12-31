@@ -5,6 +5,7 @@ from routes.wallet_routes import wallet_bp
 from routes.transaction_routes import transaction_bp
 from routes.category_routes import category_bp
 from routes.goal_routes import goal_bp
+from routes.objective_routes import objective_bp
 from extensions import db, login_manager
 from models.user import User
 from utils import seeder
@@ -28,7 +29,7 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
@@ -36,6 +37,7 @@ def create_app():
     app.register_blueprint(transaction_bp)
     app.register_blueprint(category_bp)
     app.register_blueprint(goal_bp)
+    app.register_blueprint(objective_bp)
 
     @app.route("/")
     def default():

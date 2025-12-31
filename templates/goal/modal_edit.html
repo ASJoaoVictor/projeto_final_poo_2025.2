@@ -66,7 +66,7 @@ function openEditGoalModal(actionUrl, id, currentName, currentLimit) {
     if(inputId) inputId.value = id;
     form.action = actionUrl;
     inputName.value = currentName;
-    inputValue.value = currentLimit;
+    inputValue.value = parseFloat(currentLimit).toFixed(2);
 
     // 2. Remove o 'hidden' para o navegador renderizar
     modalEdit.classList.remove('hidden');

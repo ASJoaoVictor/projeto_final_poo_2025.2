@@ -44,7 +44,7 @@ def transaction_create():
     transaction_type = request.form.get("transaction_type")
 
     date = datetime.strptime(date_str, "%Y-%m-%d")
-    print("Creating transaction:", value, date, description, wallet_id, category_id, transaction_type)
+    
     transaction = TransactionController.create_transaction(
         value=value,
         created_at=date,

@@ -40,11 +40,12 @@
 
             <!-- NAV -->
             <nav class="flex items-center gap-5 text-gray-700">
-                <a href="/dashboard" class="hover:text-purple-600 transition">Dashboard</a>
-                <a href="/wallet/new" class="hover:text-purple-600 transition">Nova carteira</a>
-                <a href="/transaction/new" class="hover:text-purple-600 transition">Nova transação</a>
+                <a href="{{ url_for('main_bp.dashboard_page') }}" class="hover:text-purple-600 transition">Dashboard</a>
+                <a href="{{ url_for('wallet_bp.wallet_new_page') }}" class="hover:text-purple-600 transition">Nova carteira</a>
+                <a href="{{ url_for('transaction_bp.transaction_new_page') }}" class="hover:text-purple-600 transition">Nova transação</a>
                 <a href="{{ url_for('category_bp.category_index_page') }}" class="hover:text-purple-600 transition">Categorias</a>
                 <a href="{{ url_for('goal_bp.goal_index_page') }}" class="hover:text-purple-600 transition">Metas</a>
+                <a href="{{ url_for('objective_bp.objective_index_page') }}" class="hover:text-purple-600 transition">Objetivos</a>
 
                 <a href="{{ url_for('auth_bp.logout') }}"
                    class="text-red-600 font-medium hover:text-red-700 transition">

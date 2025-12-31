@@ -75,7 +75,7 @@
         
         // 1. Preencher os campos com os dados recebidos
         document.getElementById('form-edit-transaction').action = actionUrl;
-        document.getElementById('edit_transaction_value').value = value;
+        document.getElementById('edit_transaction_value').value = parseFloat(value).toFixed(2);
         document.getElementById('edit_transaction_date').value = date;
         document.getElementById('edit_transaction_description').value = description == "None" ? '' : description;
         document.getElementById('edit_transaction_category').value = categoryId; // O Select seleciona automagicamente pelo ID

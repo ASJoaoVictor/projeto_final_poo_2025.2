@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-left pt-4">
+    <a href="{{ url_for('main_bp.dashboard_page') }}" class="text-sm text-gray-500 hover:text-purple-600 transition-colors">
+            ← Voltar ao Dashboard
+    </a>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Meus Objetivos 🚀</h1>
+            <p class="text-gray-500">Acompanhe o progresso dos seus sonhos de longo prazo.</p>
+        </div>
+
+        <button onclick="openCreateObjectiveModal()" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Novo Objetivo
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        {% for item in objectives_data %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow h-full">
+            
+            <div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg">{{ item.objective_name }}</h3>
+                        {% if item.due_date %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 mt-1">
+                                📅 {{ item.due_date.strftime('%d/%m/%Y') }}
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500 mt-1">
+                                Sem prazo
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if item.percentage >= 100 %}
+                        <div class="text-green-600 bg-green-100 p-2 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    {% else %}
+                        <div class="text-purple-500 bg-purple-100 p-2 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4 space-y-1">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Acumulado</span>
+                        <span class="font-bold text-gray-900">R$ {{ "%.2f"|format(item.current_amount) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Valor Alvo</span>
+                        <span class="font-medium text-gray-600">R$ {{ "%.2f"|format(item.target_amount) }}</span>
+                    </div>
+                </div>
+
+                <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-4">
+                    <div class="absolute top-0 left-0 h-full rounded-full transition-all duration-500
+                            {{ 'bg-green-500' if item.percentage >= 100 else 'bg-purple-500' }}" 
+                         style="width: {{ item.percentage }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
+                
+                <div class="flex space-x-2">
+                    <button onclick="openEditObjectiveModal(
+                                '#',
+                                '{{ item.id }}', 
+                                '{{ item.objective_name }}', 
+                                '{{ item.target_amount }}',
+                                '{{ item.current_amount }}',
+                                '{{ item.due_date.strftime('%Y-%m-%d') if item.due_date else '' }}')" 
+                            class="p-2 text-gray-400 hover:text-purple-600 rounded-lg transition-colors"
+                            title="Editar Objetivo">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button onclick="openConfirmModal(
+                                '#',
+                                'Excluir Objetivo', 
+                                'Tem certeza que deseja desistir do objetivo <b>{{ item.objective_name }}</b>? Todo o histórico será apagado.'
+                                )" 
+                            class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Excluir Objetivo">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="text-right text-xs font-semibold">
+                    {% set remaining = item.target_amount - item.current_amount %}
+                    
+                    {% if remaining <= 0 %}
+                        <span class="text-green-600 font-bold text-sm">Concluído! 🎉</span>
+                    {% else %}
+                        <span class="text-gray-400 block">Faltam</span>
+                        <span class="text-purple-600 text-sm">R$ {{ "%.2f"|format(remaining) }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% include 'objective/modal_create.html' %}
+{% include 'objective/modal_edit.html' %}
+{% endblock %}

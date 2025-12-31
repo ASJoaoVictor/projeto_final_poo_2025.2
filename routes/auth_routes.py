@@ -8,7 +8,7 @@ auth_bp = Blueprint("auth_bp", __name__, url_prefix="/auth")
 def login_page():
     if current_user.is_authenticated:
        return redirect(url_for("main_bp.dashboard_page"))
-    return render_template("login.html")
+    return render_template("auth/login.html")
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
@@ -26,7 +26,7 @@ def login():
 
 @auth_bp.route("/register", methods=["GET"])
 def register_page():
-    return render_template("register.html")
+    return render_template("auth/register.html")
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
