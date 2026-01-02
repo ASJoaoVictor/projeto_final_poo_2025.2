@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="p-6">
-                    <form action="#" method="POST" class="flex flex-col gap-5">
+                    <form action="{{ url_for('objective_bp.create_objective') }}" method="POST" class="flex flex-col gap-5">
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Objetivo</label>
@@ -28,7 +28,6 @@
                             <div class="relative">
                                 <select name="icon" 
                                     class="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-gray-700 text-lg cursor-pointer">
-                                    
                                     <option value="✈️" selected>✈️ &nbsp; Viagem / Férias</option>
                                     <option value="💻">💻 &nbsp; Eletrônicos / Trabalho</option>
                                     <option value="🏠">🏠 &nbsp; Casa / Reforma</option>
@@ -38,11 +37,8 @@
                                     <option value="🏥">🏥 &nbsp; Saúde</option>
                                     <option value="✨">✨ &nbsp; Outros</option>
                                 </select>
-                                
                                 <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
                         </div>
@@ -58,29 +54,29 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Data Limite</label>
-                                <input type="date" name="target_date" required
+                                <input type="date" name="due_date" 
                                     class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-gray-600">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Carteira / Conta</label>
                             <div class="relative">
-                                <select name="category_id" required
+                                <select name="wallet_id"
                                     class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-gray-700">
-                                    <option value="" disabled selected>Selecione...</option>
-                                    {% if categories %}
-                                        {% for category in categories %}
-                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    <option value="" selected>Todas as carteira</option>
+                                    
+                                    {% if wallets %}
+                                        {% for wallet in wallets %}
+                                        <option value="{{ wallet.id }}">{{ wallet.wallet_name }}</option>
                                         {% endfor %}
-                                    {% else %}
-                                        <option value="1">Geral</option>
                                     {% endif %}
                                 </select>
                                 <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
+                            <p class="text-xs text-gray-500 mt-1 ml-1">De onde sairá o dinheiro para este objetivo.</p>
                         </div>
 
                         <div>
@@ -107,25 +103,21 @@
 </div>
 
 <script>
+    // A lógica do script permanece exatamente a mesma, 
+    // pois ela só controla abrir/fechar o modal visualmente.
     function openCreateObjectiveModal() {
         const modal = document.getElementById('modal-create-objective');
         const backdrop = document.getElementById('backdrop-create-objective');
         const panel = document.getElementById('panel-create-objective');
         
-        // 1. Remove hidden para o navegador renderizar
         modal.classList.remove('hidden');
-        
-        // 2. Pequeno delay para permitir a transição CSS acontecer
         setTimeout(() => {
             backdrop.classList.remove('opacity-0');
             panel.classList.remove('opacity-0', 'scale-95');
-            
-            // Adiciona classes de visibilidade
             backdrop.classList.add('opacity-100');
             panel.classList.add('opacity-100', 'scale-100');
         }, 10);
-
-        document.body.style.overflow = 'hidden'; // Trava rolagem do fundo
+        document.body.style.overflow = 'hidden';
     }
 
     function closeCreateObjectiveModal() {
@@ -133,21 +125,17 @@
         const backdrop = document.getElementById('backdrop-create-objective');
         const panel = document.getElementById('panel-create-objective');
 
-        // 1. Inicia animação de saída
         backdrop.classList.remove('opacity-100');
         panel.classList.remove('opacity-100', 'scale-100');
-
         backdrop.classList.add('opacity-0');
         panel.classList.add('opacity-0', 'scale-95');
 
-        // 2. Espera a animação terminar (300ms) antes de esconder
         setTimeout(() => {
             modal.classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Destrava rolagem
+            document.body.style.overflow = 'auto';
         }, 300);
     }
-
-    // Fechar com ESC (Opcional, mas recomendado para acessibilidade)
+    
     document.addEventListener('keydown', function(evt) {
         const modal = document.getElementById('modal-create-objective');
         if (evt.key === "Escape" && !modal.classList.contains('hidden')) {

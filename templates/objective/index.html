@@ -15,7 +15,7 @@
             <p class="text-gray-500">Acompanhe o progresso dos seus sonhos de longo prazo.</p>
         </div>
 
-        <button onclick="openCreateObjectiveModal()" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+        <button onclick="openCreateObjectiveModal()" class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Novo Objetivo
         </button>
@@ -29,9 +29,9 @@
             <div>
                 <div class="flex justify-between items-start mb-4">
                     <div>
-                        <h3 class="font-bold text-gray-900 text-lg">{{ item.objective_name }}</h3>
+                        <h3 class="font-bold text-gray-900 text-lg">{{ item.objective_name }} {{ item.objective_icon }}</h3>
                         {% if item.due_date %}
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 mt-1">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 mt-1">
                                 📅 {{ item.due_date.strftime('%d/%m/%Y') }}
                             </span>
                         {% else %}
@@ -46,7 +46,7 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                     {% else %}
-                        <div class="text-purple-500 bg-purple-100 p-2 rounded-full">
+                        <div class="text-indigo-500 bg-indigo-50 p-2 rounded-full">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
                     {% endif %}
@@ -65,7 +65,7 @@
 
                 <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-4">
                     <div class="absolute top-0 left-0 h-full rounded-full transition-all duration-500
-                            {{ 'bg-green-500' if item.percentage >= 100 else 'bg-purple-500' }}" 
+                            {{ 'bg-green-500' if item.percentage >= 100 else 'bg-indigo-500' }}" 
                          style="width: {{ item.percentage }}%">
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                     </button>
                     
                     <button onclick="openConfirmModal(
-                                '#',
+                                '{{ url_for('objective_bp.delete_objective', objective_id=item.id) }}',
                                 'Excluir Objetivo', 
                                 'Tem certeza que deseja desistir do objetivo <b>{{ item.objective_name }}</b>? Todo o histórico será apagado.'
                                 )" 
@@ -108,7 +108,7 @@
                         <span class="text-green-600 font-bold text-sm">Concluído! 🎉</span>
                     {% else %}
                         <span class="text-gray-400 block">Faltam</span>
-                        <span class="text-purple-600 text-sm">R$ {{ "%.2f"|format(remaining) }}</span>
+                        <span class="text-indigo-600 text-sm">R$ {{ "%.2f"|format(remaining) }}</span>
                     {% endif %}
                 </div>
             </div>

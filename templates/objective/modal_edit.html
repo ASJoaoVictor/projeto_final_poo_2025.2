@@ -102,16 +102,14 @@
 <script>
     function openEditObjectiveModal(actionUrl, id, name, target_amount, date, icon, categoryId, description) {
         // 1. Preenche os campos do formulário
-        document.getElementById('edit_id').value = data.id;
-        document.getElementById('edit_name').value = data.name;
-        document.getElementById('edit_amount').value = data.amount;
-        document.getElementById('edit_date').value = data.date;
-        document.getElementById('edit_icon').value = data.icon; // Seleciona o emoji correto
-        document.getElementById('edit_category').value = data.category_id;
-        document.getElementById('edit_description').value = data.description;
-
-        // Opcional: Se sua rota muda baseada no ID (ex: /objetivos/1/editar), atualize o action aqui:
-        // document.getElementById('form-edit-objective').action = `/objetivos/${data.id}/editar`;
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_name').value = name;
+        document.getElementById('edit_amount').value = target_amount;
+        document.getElementById('edit_date').value = date;
+        document.getElementById('edit_icon').value = icon; // Seleciona o emoji correto
+        document.getElementById('edit_category').value = categoryId;
+        document.getElementById('edit_description').value = description == 'undefined' ? '' : description;
+        document.getElementById('form-edit-objective').action = actionUrl;
 
         // 2. Abre o modal (Animação igual ao criar)
         const modal = document.getElementById('modal-edit-objective');
