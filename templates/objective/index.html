@@ -75,12 +75,14 @@
                 
                 <div class="flex space-x-2">
                     <button onclick="openEditObjectiveModal(
-                                '#',
+                                '{{ url_for('objective_bp.edit_objective', objective_id=item.id) }}',
                                 '{{ item.id }}', 
-                                '{{ item.objective_name }}', 
+                                '{{ item.objective_name }}',
                                 '{{ item.target_amount }}',
-                                '{{ item.current_amount }}',
-                                '{{ item.due_date.strftime('%Y-%m-%d') if item.due_date else '' }}')" 
+                                '{{ item.due_date.strftime('%Y-%m-%d') if item.due_date else '' }}', 
+                                '{{ item.objective_icon }}',
+                                '{{ item.wallet_id }}'
+                                )"
                             class="p-2 text-gray-400 hover:text-purple-600 rounded-lg transition-colors"
                             title="Editar Objetivo">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

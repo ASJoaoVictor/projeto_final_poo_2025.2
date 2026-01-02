@@ -39,3 +39,26 @@ class ObjectiveController():
             db.session.commit()
             return True
         return False
+
+    @staticmethod
+    def edit_objective(id, new_name, new_target_amount, new_due_date, new_icon, new_wallet_id):
+        objective = Objective.query.get(id)
+        if not objective:
+            return None
+        
+        try:
+            new_target_amount = float(new_target_amount)
+        except:
+            return None
+        
+        if new_target_amount <= 0:
+            return None
+
+        objective.objective_name = new_name
+        objective.target_amount = new_target_amount
+        objective.due_date = new_due_date
+        objective.icon = new_icon
+        objective.wallet_id = new_wallet_id
+
+        db.session.commit()
+        return objective
