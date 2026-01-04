@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask_login import login_required, current_user
 from controllers.category_controller import CategoryController
+from utils.exceptions import CategoriaJaExisteError, CarteiraInexistenteError
 
 category_bp = Blueprint("category_bp", __name__, url_prefix="/category")
 
@@ -16,13 +17,17 @@ def category_index_page():
 def create_category():
     category_name = request.form.get("category_name").capitalize()
 
-    category = CategoryController.create_category(category_name, current_user.id)
-
-    if category:
-        flash("Nova categoria adicionada com sucesso!", "success")
+    try:
+        category = CategoryController.create_category(category_name, current_user.id)
+    except CategoriaJaExisteError as e:
+        flash(str(e), "warning")
         return redirect(url_for("category_bp.category_index_page"))
-    
-    flash("Não foi possível adicionar nova categoria", "warning")
+    except Exception as e:
+        flash("Erro ao criar categoria, tente novamente.", "error")
+        print("Error ao criar categoria:", e)
+        return redirect(url_for("category_bp.category_index_page"))
+
+    flash("Nova categoria adicionada com sucesso!", "success")
     return redirect(url_for("category_bp.category_index_page"))
 
 @category_bp.route("/<int:category_id>/edit", methods=["POST"])
@@ -30,23 +35,32 @@ def create_category():
 def edit_category(category_id):
     new_name = request.form.get("category_name").capitalize()
 
-    category = CategoryController.edit_category(category_id, new_name, current_user.id)
-
-    if category:
-        flash("Categoria editada com sucesso!", "success")
+    try:
+        category = CategoryController.edit_category(category_id, new_name, current_user.id)
+    except CarteiraInexistenteError as e:
+        flash(str(e), "warning")
         return redirect(url_for("category_bp.category_index_page"))
-    
-    flash("Não foi possível editar a categoria", "warning")
+    except Exception as e:
+        flash("Erro ao editar categoria, tente novamente.", "error")
+        print("Error ao editar categoria:", e)
+        return redirect(url_for("category_bp.category_index_page"))
+
+    flash("Categoria editada com sucesso!", "success")
     return redirect(url_for("category_bp.category_index_page"))
 
 @category_bp.route("/<int:category_id>/delete", methods=["POST"])
 @login_required
 def delete_category(category_id):
-    success = CategoryController.delete_category(category_id, current_user.id)
 
-    if success:
-        flash("Categoria deletada com sucesso!", "success")
+    try: 
+        CategoryController.delete_category(category_id, current_user.id)
+    except CarteiraInexistenteError as e:
+        flash(str(e), "warning")
         return redirect(url_for("category_bp.category_index_page"))
-    
-    flash("Não foi possível deletar a categoria", "warning")
+    except Exception as e:
+        flash("Erro ao deletar categoria, tente novamente.", "warning")
+        print("Error ao deletar categoria:", e)
+        return redirect(url_for("category_bp.category_index_page"))
+
+    flash("Categoria deletada com sucesso!", "success")
     return redirect(url_for("category_bp.category_index_page"))

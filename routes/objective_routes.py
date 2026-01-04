@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from controllers.objective_controller import ObjectiveController
 from controllers.category_controller import CategoryController
 from controllers.wallet_controller import WalletController
+from utils.exceptions import ValorInvalidoError, ObjetivoInexistenteError
 from datetime import datetime, timedelta    
 
 objective_bp = Blueprint("objective_bp", __name__, url_prefix="/objectives")
@@ -52,40 +53,42 @@ def create_objective():
     icon = request.form.get("icon")
     due_date_str = request.form.get("due_date")
 
-    due_date = None
-    if due_date_str:
-        try:
-            due_date = datetime.strptime(due_date_str, "%Y-%m-%d")
-        except ValueError:
-            flash("Data de vencimento inválida.", "error")
-            return redirect(url_for("objective_bp.objective_index_page"))
+    due_date = None if not due_date_str else datetime.strptime(due_date_str, "%Y-%m-%d")
 
-    objective = ObjectiveController.create_objective(
-        objective_name=objective_name,
-        target_amount=target_amount,
-        user_id=current_user.id,
-        icon=icon,
-        wallet_id=wallet_id,
-        due_date=due_date
-    )
-
-    if objective:
-        flash("Objetivo criado com sucesso!", "success")
+    try:
+        objective = ObjectiveController.create_objective(
+            objective_name=objective_name,
+            target_amount=target_amount,
+            user_id=current_user.id,
+            icon=icon,
+            wallet_id=wallet_id,
+            due_date=due_date
+        )
+    except (ValorInvalidoError, ObjetivoInexistenteError) as e:
+        flash(str(e), "error")
         return redirect(url_for("objective_bp.objective_index_page"))
-    
-    flash("Falha ao criar o objetivo. Verifique os dados fornecidos.", "error")
+    except Exception as e:
+        flash("Ocorreu um erro ao criar o objetivo.", "error")
+        print("Erro ao criar objetivo:", e)
+        return redirect(url_for("objective_bp.objective_index_page"))
+
+    flash("Objetivo criado com sucesso!", "success")
     return redirect(url_for("objective_bp.objective_index_page"))
-
-
+    
 @objective_bp.route("/delete/<int:objective_id>", methods=["POST"])
 @login_required
 def delete_objective(objective_id):
-    success = ObjectiveController.delete_objective(objective_id)
-    if success:
-        flash("Objetivo deletado com sucesso!", "success")
+    try:
+        success = ObjectiveController.delete_objective(objective_id)
+    except (ValorInvalidoError, ObjetivoInexistenteError) as e:
+        flash(str(e), "error")
         return redirect(url_for("objective_bp.objective_index_page"))
-    
-    flash("Objetivo não encontrado.", "error")
+    except Exception as e:
+        flash("Ocorreu um erro ao deletar o objetivo.", "error")
+        print("Erro ao deletar objetivo:", e)
+        return redirect(url_for("objective_bp.objective_index_page"))
+
+    flash("Objetivo deletado com sucesso!", "success")
     return redirect(url_for("objective_bp.objective_index_page"))
 
 @objective_bp.route("/edit/<int:objective_id>", methods=["POST"])
@@ -97,26 +100,24 @@ def edit_objective(objective_id):
     new_wallet = request.form.get("wallet_id")
     new_due_date_str = request.form.get("due_date")
 
-    new_due_date = None
-    if new_due_date_str:
-        try:
-            new_due_date = datetime.strptime(new_due_date_str, "%Y-%m-%d")
-        except ValueError:
-            flash("Data de vencimento inválida.", "error")
-            return redirect(url_for("objective_bp.objective_index_page"))
+    new_due_date = None if not new_due_date_str else datetime.strptime(new_due_date_str, "%Y-%m-%d")
 
-    objective = ObjectiveController.edit_objective(
-        id=objective_id,
-        new_name=new_name,
-        new_target_amount=new_target_amount,
-        new_due_date=new_due_date,
-        new_icon=new_icon,
-        new_wallet_id=new_wallet
-    )
-
-    if objective:
-        flash("Objetivo editado com sucesso!", "success")
+    try:
+        objective = ObjectiveController.edit_objective(
+            id=objective_id,
+            new_name=new_name,
+            new_target_amount=new_target_amount,
+            new_due_date=new_due_date,
+            new_icon=new_icon,
+            new_wallet_id=new_wallet
+        )
+    except (ValorInvalidoError, ObjetivoInexistenteError) as e:
+        flash(str(e), "error")  
         return redirect(url_for("objective_bp.objective_index_page"))
-    
-    flash("Falha ao editar o objetivo. Verifique os dados fornecidos.", "error")
+    except Exception as e:
+        flash("Ocorreu um erro ao editar o objetivo.", "error")
+        print("Erro ao editar objetivo:", e)
+        return redirect(url_for("objective_bp.objective_index_page"))
+
+    flash("Objetivo editado com sucesso!", "success")
     return redirect(url_for("objective_bp.objective_index_page"))

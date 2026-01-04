@@ -22,3 +22,15 @@ class CategoriaInexistenteError(Exception):
 
 class TransacaoInexistenteError(Exception):
     pass
+
+class ObjetivoInexistenteError(Exception):
+    pass
+
+class MetaJaExisteError(Exception):
+    pass
+
+class MetaInexistenteError(Exception):
+    pass
+
+class CategoriaJaExisteError(Exception):
+    pass

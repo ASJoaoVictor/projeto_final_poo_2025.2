@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from controllers.goal_controller import GoalController
 from controllers.category_controller import CategoryController
 from controllers.transaction_controller import TransactionController
-from datetime import datetime, timedelta
+from utils.exceptions import ValorInvalidoError, MetaJaExisteError, MetaInexistenteError
 
 goal_bp = Blueprint("goal_bp", __name__, url_prefix="/goal")
 
@@ -53,25 +53,18 @@ def create_goal():
     target_amount = request.form.get("target_amount")
     category_id = request.form.get("category_id")
     user_id = current_user.id
-
     duration = request.form.get("duration")
-
-    try:
-        duration = int(duration)
-    except:
-        flash("Duração inválida.", "error")
-        return redirect(url_for("goal_bp.goal_index_page"))
-
     unit = request.form.get("unit")
 
-    real_unit = 1 if unit == "monthly" else 12
-    duration_in_month = duration * real_unit
-    deadline = datetime.now() + timedelta(days=30 * duration_in_month)
 
-    goal = GoalController.create_goal(goal_name, target_amount, deadline, user_id, category_id)
-
-    if not goal:
-        flash("Erro ao criar a meta. Verifique se já existe uma meta ativa com esse nome ou se o valor é válido.", "error")
+    try:
+        goal = GoalController.create_goal(goal_name, target_amount, user_id, duration, unit, category_id)
+    except (ValorInvalidoError, MetaJaExisteError) as e:
+        flash(str(e), "error")
+        return redirect(url_for("goal_bp.goal_index_page"))
+    except Exception as e:
+        flash("Erro ao criar a meta. Tente novamente.", "error")
+        print("Erro ao criar a meta:", e)
         return redirect(url_for("goal_bp.goal_index_page"))
 
     flash("Meta criada com sucesso!", "success")
@@ -82,10 +75,14 @@ def create_goal():
 def delete_goal(goal_id):
     user_id = current_user.id
 
-    success = GoalController.delete_goal(goal_id, user_id)
-
-    if not success:
-        flash("Erro ao deletar a meta.", "error")
+    try:
+        GoalController.delete_goal(goal_id, user_id)
+    except MetaInexistenteError as e:
+        flash(str(e), "error")
+        return redirect(url_for("goal_bp.goal_index_page"))
+    except Exception as e:
+        flash("Erro ao deletar a meta. Tente novamente.", "error")
+        print("Erro ao deletar a meta:", e)
         return redirect(url_for("goal_bp.goal_index_page"))
     
     flash("Meta deletada com sucesso!", "success")
@@ -98,10 +95,14 @@ def edit_goal(goal_id):
     new_name = request.form.get("edit_goal_name").capitalize()
     new_target_amount = request.form.get("edit_target_amount")
 
-    goal = GoalController.edit_goal(goal_id, user_id, new_name, new_target_amount)
-
-    if not goal:
-        flash("Erro ao editar a meta. Verifique se a meta existe ou se o valor é válido.", "error")
+    try:
+        goal = GoalController.edit_goal(goal_id, user_id, new_name, new_target_amount)
+    except (ValorInvalidoError, MetaJaExisteError, MetaInexistenteError) as e:
+        flash(str(e), "error")
+        return redirect(url_for("goal_bp.goal_index_page"))
+    except Exception as e:
+        flash("Erro ao editar a meta. Tente novamente.", "error")
+        print("Erro ao editar a meta:", e)
         return redirect(url_for("goal_bp.goal_index_page"))
     
     flash("Meta editada com sucesso!", "success")

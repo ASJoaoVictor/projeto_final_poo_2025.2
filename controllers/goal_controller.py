@@ -1,16 +1,25 @@
 from extensions import db
 from models.goal import Goal
-from datetime import datetime
+from datetime import datetime, timedelta
+from utils.exceptions import ValorInvalidoError, MetaJaExisteError, MetaInexistenteError
 
 class GoalController():
     
     @staticmethod
-    def create_goal(goal_name, target_amount, deadline, user_id, category_id=None):
+    def create_goal(goal_name, target_amount, user_id, duration, unit, category_id=None):
         try:
             target_amount = float(target_amount)
-        except:
-            return None
-        print("Existing Goal:")
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("Valor alvo inválido.")
+
+        try:
+            duration = int(duration)
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("Duração inválida.")
+        
+        real_unit = 1 if unit == "monthly" else 12
+        duration_in_month = duration * real_unit
+        deadline = datetime.now() + timedelta(days=30 * duration_in_month)
         
         existing_goal = Goal.query.filter_by(
             user_id= user_id, 
@@ -19,7 +28,7 @@ class GoalController():
 
 
         if existing_goal and existing_goal.is_active:
-            return None
+            raise MetaJaExisteError("Já existe uma meta ativa com esse nome.") 
         
         if existing_goal:
             goal = existing_goal
@@ -66,9 +75,10 @@ class GoalController():
         ).first()
 
         if not goal:
-            return False
+            raise MetaInexistenteError("Meta inexistente.")
         
-        goal.is_active = False
+        db.session.delete(goal)
+        #goal.is_active = False
         db.session.commit()
 
         return True
@@ -82,12 +92,20 @@ class GoalController():
         ).first()
 
         if not goal:
-            return None
+            raise MetaInexistenteError("Meta inexistente.")
+
+        goal_existing = Goal.query.filter_by(
+            user_id= user_id,
+            goal_name= new_name
+        ).first()
+
+        if goal_existing and goal_existing.id != goal.id:
+            raise MetaJaExisteError("Já existe uma meta ativa com esse nome.")
         
         try:
             new_target_amount = float(new_target_amount)
         except:
-            return None
+            raise ValorInvalidoError("Valor alvo inválido.")
 
         goal.goal_name = new_name
         goal.target_amount = new_target_amount

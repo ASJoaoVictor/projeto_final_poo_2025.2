@@ -1,5 +1,6 @@
 from extensions import db
 from models.objective import Objective
+from utils.exceptions import ValorInvalidoError, ObjetivoInexistenteError
 
 class ObjectiveController():
     
@@ -7,12 +8,12 @@ class ObjectiveController():
     def create_objective(objective_name, target_amount, user_id, icon, wallet_id, due_date=None):
         try:
             target_amount = float(target_amount)
-        except:
-            return None
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("Valor inválido para o objetivo.")
         
         if target_amount <= 0:
-            return None
-        
+            raise ValorInvalidoError("O valor do objetivo deve ser positivo.")
+
         objective = Objective(
             objective_name= objective_name,
             target_amount= target_amount,
@@ -34,25 +35,27 @@ class ObjectiveController():
     @staticmethod
     def delete_objective(objective_id):
         objective = Objective.query.get(objective_id)
-        if objective:
-            db.session.delete(objective)
-            db.session.commit()
-            return True
-        return False
+
+        if not objective:
+            raise ObjetivoInexistenteError("Objetivo não encontrado.")
+
+        db.session.delete(objective)
+        db.session.commit()
+        return True
 
     @staticmethod
     def edit_objective(id, new_name, new_target_amount, new_due_date, new_icon, new_wallet_id):
         objective = Objective.query.get(id)
         if not objective:
-            return None
+            raise ObjetivoInexistenteError("Objetivo não encontrado.")
         
         try:
             new_target_amount = float(new_target_amount)
-        except:
-            return None
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("Valor inválido para o objetivo.")
         
         if new_target_amount <= 0:
-            return None
+            raise ValorInvalidoError("O valor do objetivo deve ser positivo.")
 
         objective.objective_name = new_name
         objective.target_amount = new_target_amount

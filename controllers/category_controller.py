@@ -1,5 +1,6 @@
 from extensions import db
-from models.category import UserCategory, SystemCategory
+from models.category import UserCategory
+from utils.exceptions import CategoriaJaExisteError, CarteiraInexistenteError
 
 class CategoryController():
 
@@ -10,8 +11,9 @@ class CategoryController():
             user_id= user_id
             ).first()
         print(name)
+
         if exising_category:
-            return None
+            raise CategoriaJaExisteError("Categoria com esse nome já existe.")
 
         new_category = UserCategory(
             name= name,
@@ -35,7 +37,7 @@ class CategoryController():
         ).first()
 
         if not category:
-            return None
+            raise CarteiraInexistenteError("Categoria não encontrada.")
         
         category.name = new_name
         db.session.commit()
@@ -50,16 +52,10 @@ class CategoryController():
         ).first()
 
         if not category:
-            return False
-        
-        if category.goals:
-            return False
+            raise CarteiraInexistenteError("Categoria não encontrada.")
 
-        print("Deleting category:", category.goals)
-        
         db.session.delete(category)
         db.session.commit()
-
         return True
 
 
