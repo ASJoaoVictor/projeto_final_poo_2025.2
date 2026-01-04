@@ -2,6 +2,7 @@ from extensions import db
 from models.transaction import Transaction
 from models.wallet import Wallet
 from models.category import UserCategory, SystemCategory
+from utils.exceptions import CarteiraInexistenteError, SaldoInsuficienteError, CarteiraInexistenteError, ValorInvalidoError, TransacaoInexistenteError
 
 class TransactionController():
     
@@ -9,11 +10,11 @@ class TransactionController():
     def create_transaction(transaction_type, value, wallet_id, category_id, user_id, description="", created_at=None):
         try:
             value = float(value)
-        except:
-            return None
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("O valor da transação deve ser um número válido.")
         
         if value <= 0:
-            return None
+            raise ValorInvalidoError("O valor da transação deve ser maior que zero.")
         
         wallet = Wallet.query.filter_by(
             id= wallet_id, 
@@ -21,7 +22,7 @@ class TransactionController():
             is_active= True).first()
         
         if not wallet:
-            return None
+            raise CarteiraInexistenteError("Carteira inexistente.")
         
         category = (
             UserCategory.query.filter_by(id= category_id, user_id= user_id).first()
@@ -30,11 +31,11 @@ class TransactionController():
         )
 
         if not category:
-            return None
+            raise CarteiraInexistenteError("Categoria inexistente.")
 
         # Saldo insuficiente
         if transaction_type == "expense" and wallet.current_balance < value:
-            return None
+            raise SaldoInsuficienteError("Saldo insuficiente na carteira para realizar esta despesa.")
 
         transaction = Transaction(
             transaction_type= transaction_type,
@@ -58,7 +59,6 @@ class TransactionController():
 
     @staticmethod
     def get_transactions_by_wallet(wallet_id):
-        # Mudamos de .asc() para .desc()
         return Transaction.query.filter_by(wallet_id=wallet_id).order_by(Transaction.created_at.desc()).order_by(Transaction.id.desc()).all()
 
     @staticmethod
@@ -70,8 +70,7 @@ class TransactionController():
         transaction = Transaction.query.filter_by(id= transaction_id).first()
 
         if not transaction:
-            return False
-
+            raise TransacaoInexistenteError("Transação inexistente.") 
         
         wallet = Wallet.query.filter_by(
             id= transaction.wallet_id,
@@ -80,7 +79,7 @@ class TransactionController():
         ).first()
 
         if not wallet:
-            return False
+            raise CarteiraInexistenteError("Carteira inexistente.") 
         
 
         if transaction.transaction_type == "income":
@@ -99,11 +98,11 @@ class TransactionController():
 
         try:
             value = float(value)
-        except:
-            return False
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("O valor da transação deve ser um número válido.")
 
         if not transaction:
-            return False
+            raise TransacaoInexistenteError("Transação inexistente.")
 
         wallet_id = transaction.wallet_id
 
@@ -114,7 +113,7 @@ class TransactionController():
         ).first()   
 
         if not wallet:
-            return False
+            raise CarteiraInexistenteError("Carteira inexistente.")
         
         if transaction.transaction_type == "income":
             wallet.current_balance -= transaction.value

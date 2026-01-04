@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from controllers.wallet_controller import WalletController
 from controllers.category_controller import CategoryController
 from controllers.transaction_controller import TransactionController
+from utils.exceptions import CarteiraInexistenteError, SaldoInsuficienteError, CarteiraInexistenteError, ValorInvalidoError, TransacaoInexistenteError
 from datetime import datetime
 
 
@@ -44,37 +45,53 @@ def transaction_create():
     transaction_type = request.form.get("transaction_type")
 
     date = datetime.strptime(date_str, "%Y-%m-%d")
+
+    try:
+        TransactionController.create_transaction(
+            value=value,
+            created_at=date,
+            description=description,
+            wallet_id=wallet_id,
+            category_id=category_id,
+            transaction_type=transaction_type,
+            user_id=current_user.id
+        )
+    except CarteiraInexistenteError as e:
+        flash(str(e), "warning")
+        return redirect(url_for("transaction_bp.transaction_new_page"))
+    except SaldoInsuficienteError as e:
+        flash(str(e), "warning")
+        return redirect(url_for("transaction_bp.transaction_new_page"))
+    except CarteiraInexistenteError as e:
+        flash(str(e), "warning")
+        return redirect(url_for("transaction_bp.transaction_new_page"))
+    except ValorInvalidoError as e:
+        flash(str(e), "warning")
+        return redirect(url_for("transaction_bp.transaction_new_page"))
+    except Exception as e:
+        flash("Ocorreu um erro ao criar a transação.", "error")
+        print("Erro não tratado:", e)
+        return redirect(url_for("transaction_bp.transaction_new_page"))
     
-    transaction = TransactionController.create_transaction(
-        value=value,
-        created_at=date,
-        description=description,
-        wallet_id=wallet_id,
-        category_id=category_id,
-        transaction_type=transaction_type,
-        user_id=current_user.id
-    )
 
-    if transaction:
-        flash("Transação criada com sucesso!", "success")
-        return redirect(url_for("main_bp.dashboard_page"))
-
-    flash("Não foi possível criar a transação", "warning")
-    return redirect(url_for("transaction_bp.transaction_new_page"))
-
-
-@transaction_bp.route("/edit")
-@login_required
-def transaction_edit():
-    return "Em desenvolvimento"
+    flash("Transação criada com sucesso!", "success")
+    return redirect(url_for("main_bp.dashboard_page"))
 
 @transaction_bp.route("/<int:transaction_id>/delete", methods=["POST"])
 @login_required
 def delete_transaction(transaction_id):
-    transaction = TransactionController.delete_transaction(transaction_id, current_user.id)
 
-    if not transaction:
-        flash("Não foi possível deletar a transação", "warning")
+    try:
+        TransactionController.delete_transaction(transaction_id, current_user.id)
+    except CarteiraInexistenteError as e:
+        flash(str(e), "warning")
+        return redirect(request.referrer)
+    except TransacaoInexistenteError as e:
+        flash(str(e), "warning")
+        return redirect(request.referrer)
+    except Exception as e:
+        flash("Ocorreu um erro ao deletar a transação.", "error")
+        print("Erro não tratado:", e)
         return redirect(request.referrer)
     
     flash("Transação deletada com sucesso!", "success")
@@ -89,19 +106,29 @@ def edit_transaction(transaction_id):
     category_id = request.form.get("category_id")
 
     date = datetime.strptime(date_str, "%Y-%m-%d")
-    transaction = TransactionController.edit_transaction(
-        transaction_id=transaction_id,
-        value=value,
-        created_at=date,
-        description=description,
-        category_id=category_id,
-        user_id=current_user.id
-    )
 
-    if not transaction:
-        flash("Não foi possível editar a transação", "warning")
+    try:
+        transaction = TransactionController.edit_transaction(
+            transaction_id=transaction_id,
+            value=value,
+            created_at=date,
+            description=description,
+            category_id=category_id,
+            user_id=current_user.id
+        )
+    except CarteiraInexistenteError as e:
+        flash(str(e), "warning")
         return redirect(request.referrer)
-    
+    except ValorInvalidoError as e:
+        flash(str(e), "warning")
+        return redirect(request.referrer)
+    except TransacaoInexistenteError as e:
+        flash(str(e), "warning")
+        return redirect(request.referrer)
+    except Exception as e:
+        flash("Ocorreu um erro ao editar a transação.", "error")
+        print("Erro não tratado:", e)
+        return redirect(request.referrer)
+
     flash("Transação editada com sucesso!", "success")
-    #return redirect(url_for("wallet_bp.wallet_detail_page", wallet_id=transaction.wallet_id))
     return redirect(request.referrer)

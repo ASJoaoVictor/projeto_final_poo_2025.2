@@ -46,7 +46,7 @@ def objective_index_page():
 @objective_bp.route("/create", methods=["POST"])
 @login_required
 def create_objective():
-    objective_name = request.form.get("objective_name")
+    objective_name = request.form.get("objective_name").capitalize()
     target_amount = request.form.get("target_amount")
     wallet_id = request.form.get("wallet_id")
     icon = request.form.get("icon")
@@ -91,7 +91,7 @@ def delete_objective(objective_id):
 @objective_bp.route("/edit/<int:objective_id>", methods=["POST"])
 @login_required
 def edit_objective(objective_id):
-    new_name = request.form.get("objective_name")
+    new_name = request.form.get("objective_name").capitalize()
     new_target_amount = request.form.get("target_amount")
     new_icon = request.form.get("icon")
     new_wallet = request.form.get("wallet_id")

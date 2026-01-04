@@ -2,17 +2,15 @@ from extensions import db
 from models.wallet import Wallet
 from models.category import SystemCategory
 from controllers.transaction_controller import TransactionController
-from controllers.category_controller import CategoryController
-
-
+from utils.exceptions import ValorInvalidoError, CarteiraJaExisteError, CategoriaInvalidaError, CarteiraInexistenteError, AcessoNegadoError
 class WalletController():
 
     @staticmethod
     def create_wallet(wallet_name, initial_balance, user_id):
         try:
             initial_balance = float(initial_balance)
-        except:
-            return None
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("O valor inicial deve ser um número válido.")
         
         existing_wallet = Wallet.query.filter_by(
             user_id= user_id, 
@@ -20,7 +18,7 @@ class WalletController():
         ).first()
 
         if existing_wallet and existing_wallet.is_active:
-            return None
+            raise CarteiraJaExisteError("Já existe uma carteira com esse nome.") 
         
         if existing_wallet:
             wallet = existing_wallet
@@ -40,7 +38,7 @@ class WalletController():
         category = SystemCategory.query.filter_by(name= "Depósito inicial").first()
 
         if not category:
-            return None
+            raise CategoriaInvalidaError("Categoria padrão 'Depósito inicial' não encontrada.")
 
         if initial_balance > 0:
             TransactionController.create_transaction(
@@ -61,9 +59,12 @@ class WalletController():
         return wallets
     
     @staticmethod
-    def get_wallet_by_id(wallet_id):
-        wallet = Wallet.query.filter_by(id= wallet_id, is_active= True).first()
+    def get_wallet_by_id(wallet_id, user_id):
+        wallet = Wallet.query.filter_by(id= wallet_id, user_id= user_id, is_active= True).first()
 
+        if not wallet:
+            raise CarteiraInexistenteError("Carteira não encontrada.")
+            
         return wallet
 
     @staticmethod
@@ -84,10 +85,10 @@ class WalletController():
         wallet = WalletController.get_wallet_by_id(wallet_id)
 
         if not wallet:
-            return None
+            raise CarteiraInexistenteError("Carteira não encontrada.")
         
         if wallet.user_id != user_id:
-            return None
+            raise AcessoNegadoError("Acesso negado à carteira.") 
         
         transactions = TransactionController.get_transactions_by_wallet(wallet_id)
 
@@ -107,7 +108,15 @@ class WalletController():
         ).first()
 
         if not wallet:
-            return None
+            raise CarteiraInexistenteError("Carteira não encontrada.")
+
+        wallet_existing = Wallet.query.filter_by(
+            user_id= user_id,
+            wallet_name= new_name
+        ).first()
+
+        if wallet_existing and wallet_existing.id != wallet_id:
+            raise CarteiraJaExisteError("Já existe uma carteira com esse nome.") 
 
         wallet.wallet_name = new_name
         db.session.commit()
