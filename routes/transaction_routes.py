@@ -12,7 +12,17 @@ transaction_bp = Blueprint("transaction_bp", __name__, url_prefix="/transaction"
 @transaction_bp.route("", methods=["GET"])
 @login_required
 def transaction_page():
-    transactions = TransactionController.get_user_transactions(user_id=current_user.id)
+    today = datetime.now()
+
+    selected_month = request.args.get("month", today.month, type=int)
+    selected_year = request.args.get("year", today.year, type=int)
+
+    transactions = TransactionController.get_user_transactions(
+        user_id=current_user.id,
+        month=selected_month,
+        year=selected_year
+    )
+    
     total_income = sum(t.value for t in transactions if t.transaction_type == "income")
     total_expense = sum(t.value for t in transactions if t.transaction_type == "expense")
     total_balance = total_income - total_expense

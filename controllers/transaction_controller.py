@@ -3,6 +3,7 @@ from models.transaction import Transaction
 from models.wallet import Wallet
 from models.category import UserCategory, SystemCategory
 from utils.exceptions import CarteiraInexistenteError, SaldoInsuficienteError, CarteiraInexistenteError, ValorInvalidoError, TransacaoInexistenteError
+from sqlalchemy import extract
 
 class TransactionController():
     
@@ -62,8 +63,12 @@ class TransactionController():
         return Transaction.query.filter_by(wallet_id=wallet_id).order_by(Transaction.created_at.desc()).order_by(Transaction.id.desc()).all()
 
     @staticmethod
-    def get_user_transactions(user_id):
-        return Transaction.query.join(Wallet).filter(Wallet.user_id == user_id).order_by(Transaction.created_at.desc()).order_by(Transaction.id.desc()).all()
+    def get_user_transactions(user_id, month, year):
+        return Transaction.query.join(Wallet).filter(
+            Wallet.user_id == user_id,
+            extract("month", Transaction.created_at) == month,
+            extract("year", Transaction.created_at) == year
+        ).order_by(Transaction.created_at.desc()).order_by(Transaction.id.desc()).all()
 
     @staticmethod
     def delete_transaction(transaction_id, user_id):
