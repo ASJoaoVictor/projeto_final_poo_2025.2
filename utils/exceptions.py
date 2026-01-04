@@ -34,3 +34,9 @@ class MetaInexistenteError(Exception):
 
 class CategoriaJaExisteError(Exception):
     pass
+
+class UsuarioJaExisteError(Exception):
+    pass
+
+class UsuarioInexistenteError(Exception):
+    pass
