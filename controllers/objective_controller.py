@@ -1,16 +1,17 @@
 from extensions import db
 from models.objective import Objective
 from utils.exceptions import ValorInvalidoError, ObjetivoInexistenteError
+from datetime import datetime
 
 class ObjectiveController():
     """Controlador responsável pelo gerenciamento de objetivos financeiros de curto e longo prazo."""
     
     @staticmethod
-    def create_objective(objective_name, target_amount, user_id, icon, wallet_id, due_date=None):
+    def create_objective(objective_name, target_amount, user_id, icon, wallet_id, due_date_str=None):
         """Cria um novo objetivo financeiro e o associa a uma carteira.
 
-        Valida se o valor alvo é numérico e positivo antes de persistir o
-        novo objetivo no banco de dados.
+        Converte a string de data para objeto datetime e valida se o valor alvo 
+        é numérico e positivo antes de persistir no banco de dados.
 
         Args:
             objective_name (str): O nome descritivo do objetivo.
@@ -18,13 +19,13 @@ class ObjectiveController():
             user_id (int): O ID do usuário dono do objetivo.
             icon (str): Identificador do ícone (ex: um emoji '💰').
             wallet_id (int): O ID da carteira vinculada a este objetivo.
-            due_date (datetime, optional): A data limite para alcançar o objetivo.
+            due_date_str (str, optional): A data limite no formato 'YYYY-MM-DD'.
 
         Returns:
-            Objective: A instância do objetivo recém-criado.
+            Objective: A instância do objetivo recém-criada.
 
         Raises:
-            ValorInvalidoError: Se o valor não for um número ou for menor/igual a zero.
+            ValorInvalidoError: Se o valor for inválido/negativo ou a data estiver no formato errado.
         """
         try:
             target_amount = float(target_amount)
@@ -33,6 +34,11 @@ class ObjectiveController():
         
         if target_amount <= 0:
             raise ValorInvalidoError("O valor do objetivo deve ser positivo.")
+
+        try:
+            due_date = None if not due_date_str else datetime.strptime(due_date_str, "%Y-%m-%d")
+        except ValueError:
+            raise ValorInvalidoError("Data de vencimento inválida.")
 
         objective = Objective(
             objective_name= objective_name,
