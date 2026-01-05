@@ -22,11 +22,11 @@ def goal_index_page():
         current_amount = 0
         if goal.category:
             for transaction in goal.category.transactions:
-                if transaction.transaction_type == "expense" and transaction.created_at >= goal.created_at:
+                if transaction.transaction_type == "expense" and transaction.created_at >= goal.created_at and transaction.created_at <= goal.deadline:
                     current_amount += transaction.value
         else:
             for transaction in TransactionController.get_user_transactions(current_user.id):
-                if transaction.transaction_type == "expense" and transaction.created_at >= goal.created_at:
+                if transaction.transaction_type == "expense" and transaction.created_at >= goal.created_at and transaction.created_at <= goal.deadline:
                     current_amount += transaction.value
         goals_data.append({
             'id': goal.id,

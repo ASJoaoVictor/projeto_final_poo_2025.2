@@ -79,7 +79,7 @@ def create_objective():
 @login_required
 def delete_objective(objective_id):
     try:
-        success = ObjectiveController.delete_objective(objective_id)
+        ObjectiveController.delete_objective(objective_id, current_user.id)
     except (ValorInvalidoError, ObjetivoInexistenteError) as e:
         flash(str(e), "error")
         return redirect(url_for("objective_bp.objective_index_page"))
@@ -109,7 +109,8 @@ def edit_objective(objective_id):
             new_target_amount=new_target_amount,
             new_due_date=new_due_date,
             new_icon=new_icon,
-            new_wallet_id=new_wallet
+            new_wallet_id=new_wallet,
+            user_id=current_user.id
         )
     except (ValorInvalidoError, ObjetivoInexistenteError) as e:
         flash(str(e), "error")  
