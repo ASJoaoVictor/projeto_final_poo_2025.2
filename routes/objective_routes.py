@@ -11,6 +11,19 @@ objective_bp = Blueprint("objective_bp", __name__, url_prefix="/objectives")
 @objective_bp.route("/", methods=["GET"])
 @login_required
 def objective_index_page():
+    """Exibe o painel de objetivos financeiros.
+
+    Calcula o progresso de cada objetivo comparando o saldo atual da carteira vinculada
+    com o valor alvo do objetivo.
+    
+    Lógica de Cálculo:
+    - Se o objetivo está vinculado a uma carteira específica: Usa o saldo dessa carteira.
+    - Se não está vinculado (objetivo geral): Usa a soma dos saldos de todas as carteiras do usuário.
+
+    Returns:
+        str: O template 'objective/index.html' renderizado com a lista processada 'objectives_data',
+        além das categorias e carteiras para os formulários de criação/edição.
+    """
     wallets = WalletController.get_wallets_by_user(current_user.id)
     categories = CategoryController.get_user_categories(current_user.id)
     objectives = ObjectiveController.get_objectives_user(current_user.id)
@@ -47,13 +60,19 @@ def objective_index_page():
 @objective_bp.route("/create", methods=["POST"])
 @login_required
 def create_objective():
+    """Cria um novo objetivo financeiro.
+
+    Coleta os dados brutos do formulário e delega a validação e conversão 
+    (incluindo a data) para o ObjectiveController.
+
+    Returns:
+        Werkzeug.wrappers.response.Response: Redirecionamento para a lista de objetivos.
+    """
     objective_name = request.form.get("objective_name").capitalize()
     target_amount = request.form.get("target_amount")
     wallet_id = request.form.get("wallet_id")
     icon = request.form.get("icon")
-    due_date_str = request.form.get("due_date")
-
-    due_date = None if not due_date_str else datetime.strptime(due_date_str, "%Y-%m-%d")
+    due_date = request.form.get("due_date")
 
     try:
         objective = ObjectiveController.create_objective(
@@ -62,7 +81,7 @@ def create_objective():
             user_id=current_user.id,
             icon=icon,
             wallet_id=wallet_id,
-            due_date=due_date
+            due_date_str=due_date
         )
     except (ValorInvalidoError, ObjetivoInexistenteError) as e:
         flash(str(e), "error")
@@ -78,6 +97,16 @@ def create_objective():
 @objective_bp.route("/delete/<int:objective_id>", methods=["POST"])
 @login_required
 def delete_objective(objective_id):
+    """Remove um objetivo financeiro.
+
+    Chama o controller para exclusão. Garante que o objetivo pertence ao usuário atual.
+
+    Args:
+        objective_id (int): O ID do objetivo a ser removido.
+
+    Returns:
+        Werkzeug.wrappers.response.Response: Redirecionamento para a lista de objetivos.
+    """
     try:
         ObjectiveController.delete_objective(objective_id, current_user.id)
     except (ValorInvalidoError, ObjetivoInexistenteError) as e:
@@ -94,6 +123,16 @@ def delete_objective(objective_id):
 @objective_bp.route("/edit/<int:objective_id>", methods=["POST"])
 @login_required
 def edit_objective(objective_id):
+    """Edita um objetivo existente.
+
+    Atualiza nome, valor alvo, data, ícone e carteira vinculada.
+
+    Args:
+        objective_id (int): O ID do objetivo a ser editado.
+
+    Returns:
+        Werkzeug.wrappers.response.Response: Redirecionamento para a lista de objetivos.
+    """
     new_name = request.form.get("objective_name").capitalize()
     new_target_amount = request.form.get("target_amount")
     new_icon = request.form.get("icon")

@@ -27,7 +27,7 @@
         {% endif %}
       {% endwith %}
 
-        <form action="/auth/register" method="post">
+        <form action="{{ url_for('auth_bp.register') }}" method="post">
             <label for="" class="block mb-1">Nome:</label>
             <input type="text" name="username" placeholder="Seu nome" class="w-full border border-gray-300 rounded px-3 py-2"><br>
 

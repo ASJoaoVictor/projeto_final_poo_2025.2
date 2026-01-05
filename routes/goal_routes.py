@@ -10,7 +10,21 @@ goal_bp = Blueprint("goal_bp", __name__, url_prefix="/goal")
 @goal_bp.route("/", methods=["GET"])
 @login_required
 def goal_index_page():
-    #Verificar prazos das metas
+    """Exibe o painel de metas (orçamentos) do usuário.
+
+    Realiza o processamento em tempo real do progresso de cada meta:
+    1. Verifica e atualiza metas expiradas.
+    2. Itera sobre cada meta ativa.
+    3. Soma as transações do tipo 'despesa' que ocorreram dentro do prazo da meta.
+       - Se a meta tem categoria, soma apenas despesas daquela categoria.
+       - Se não tem categoria, soma todas as despesas do usuário.
+    4. Calcula a porcentagem de consumo e define o status visual (safe, warning, danger).
+
+    Returns:
+        str: O template 'goal/index.html' com a lista de dados processados (goals_data)
+        e as categorias disponíveis para criação de novas metas.
+    """
+    # Verificar prazos das metas
     GoalController.check_expired_goals(current_user.id)
 
     categories = CategoryController.get_user_categories(current_user.id)
@@ -28,15 +42,19 @@ def goal_index_page():
             for transaction in TransactionController.get_user_transactions(current_user.id):
                 if transaction.transaction_type == "expense" and transaction.created_at >= goal.created_at and transaction.created_at <= goal.deadline:
                     current_amount += transaction.value
+        
         goals_data.append({
             'id': goal.id,
             'name': goal.goal_name,
             'category_name': goal.category.name if goal.category else 'Sem Categoria',
             'current': float(current_amount),
             'target': float(goal.target_amount),
+            # Percentage limitado a 100 para a barra de progresso visual não quebrar o layout
             'percentage': min(int((current_amount / goal.target_amount) * 100), 100),
+            # Real percentage mostra o valor real (pode passar de 100%)
             'real_percentage': int((current_amount / goal.target_amount) * 100),
             'remaining': float(goal.target_amount - current_amount),
+            # Lógica de cores baseada no consumo do orçamento
             'status': 'safe' if current_amount <= goal.target_amount * 0.8 else
                       'warning' if current_amount <= goal.target_amount else
                       'danger'
@@ -49,6 +67,14 @@ def goal_index_page():
 @goal_bp.route("/create", methods=["POST"])
 @login_required
 def create_goal():
+    """Processa a criação de uma nova meta de orçamento.
+
+    Recebe os parâmetros do formulário, trata a capitalização do nome
+    e chama o controller.
+
+    Returns:
+        Werkzeug.wrappers.response.Response: Redirecionamento para o painel de metas.
+    """
     goal_name = request.form.get("goal_name").capitalize()
     target_amount = request.form.get("target_amount")
     category_id = request.form.get("category_id")
@@ -73,6 +99,14 @@ def create_goal():
 @goal_bp.route("/delete/<int:goal_id>", methods=["POST"])
 @login_required
 def delete_goal(goal_id):
+    """Remove uma meta existente.
+
+    Args:
+        goal_id (int): O ID da meta a ser excluída.
+
+    Returns:
+        Werkzeug.wrappers.response.Response: Redirecionamento para o painel de metas.
+    """
     user_id = current_user.id
 
     try:
@@ -91,6 +125,16 @@ def delete_goal(goal_id):
 @goal_bp.route("/edit/<int:goal_id>", methods=["POST"])
 @login_required
 def edit_goal(goal_id):
+    """Edita as informações básicas de uma meta (nome e valor alvo).
+
+    Nota: Não permite alterar a categoria ou o prazo da meta após a criação.
+
+    Args:
+        goal_id (int): O ID da meta a ser editada.
+
+    Returns:
+        Werkzeug.wrappers.response.Response: Redirecionamento para o painel de metas.
+    """
     user_id = current_user.id
     new_name = request.form.get("edit_goal_name").capitalize()
     new_target_amount = request.form.get("edit_target_amount")

@@ -3,6 +3,7 @@ from models.wallet import Wallet
 from models.category import SystemCategory
 from controllers.transaction_controller import TransactionController
 from utils.exceptions import ValorInvalidoError, CarteiraJaExisteError, CategoriaInvalidaError, CarteiraInexistenteError, AcessoNegadoError
+from datetime import datetime
 
 class WalletController():
     """Controlador responsável pelo gerenciamento de carteiras (Wallets) e seus saldos."""
@@ -65,6 +66,7 @@ class WalletController():
             TransactionController.create_transaction(
                 transaction_type= "income",
                 value= initial_balance,
+                date_str= str(datetime.now().date()),
                 wallet_id= wallet.id,
                 category_id= category.id,
                 user_id= user_id,

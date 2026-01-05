@@ -197,6 +197,9 @@ class TransactionController():
         """
         transaction = Transaction.query.filter_by(id= transaction_id).first()
 
+        if not transaction:
+            raise TransacaoInexistenteError("Transação inexistente.")
+        
         try:
             value = float(value)
         except (ValueError, TypeError):
@@ -209,9 +212,6 @@ class TransactionController():
             created_at = datetime.strptime(date_str, "%Y-%m-%d")
         except (ValueError, TypeError):
             raise ValorInvalidoError("Data da transação inválida.")
-
-        if not transaction:
-            raise TransacaoInexistenteError("Transação inexistente.")
 
         wallet_id = transaction.wallet_id
 
