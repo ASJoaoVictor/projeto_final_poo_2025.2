@@ -4,12 +4,13 @@ from models.wallet import Wallet
 from models.category import UserCategory, SystemCategory
 from utils.exceptions import CarteiraInexistenteError, SaldoInsuficienteError, CarteiraInexistenteError, ValorInvalidoError, TransacaoInexistenteError
 from sqlalchemy import extract
+from datetime import datetime
 
 class TransactionController():
     """Controlador responsável pelo gerenciamento de transações financeiras (receitas e despesas)."""
     
     @staticmethod
-    def create_transaction(transaction_type, value, wallet_id, category_id, user_id, description="", created_at=None):
+    def create_transaction(transaction_type, value, wallet_id, category_id, user_id, description="", date_str=None):
         """Cria uma nova transação e atualiza o saldo da carteira correspondente.
 
         Verifica a existência da carteira e da categoria (seja do sistema ou do usuário).
@@ -40,6 +41,11 @@ class TransactionController():
         
         if value <= 0:
             raise ValorInvalidoError("O valor da transação deve ser maior que zero.")
+        
+        try:
+            created_at = datetime.strptime(date_str, "%Y-%m-%d")
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("Data da transação inválida.")
         
         wallet = Wallet.query.filter_by(
             id= wallet_id, 
