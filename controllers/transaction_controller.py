@@ -13,9 +13,9 @@ class TransactionController():
     def create_transaction(transaction_type, value, wallet_id, category_id, user_id, description="", date_str=None):
         """Cria uma nova transação e atualiza o saldo da carteira correspondente.
 
-        Verifica a existência da carteira e da categoria (seja do sistema ou do usuário).
-        Se for uma despesa, verifica se há saldo suficiente. Após a criação,
-        o saldo da carteira é ajustado (somado para receitas, subtraído para despesas).
+        Recebe a data como string e realiza a conversão para datetime. Valida
+        a existência da carteira e da categoria (seja do sistema ou do usuário).
+        Se for despesa, verifica saldo. Por fim, atualiza o saldo da carteira.
 
         Args:
             transaction_type (str): Tipo da transação ("income" ou "expense").
@@ -24,14 +24,14 @@ class TransactionController():
             category_id (int): O ID da categoria associada.
             user_id (int): O ID do usuário dono da transação.
             description (str, optional): Descrição opcional da transação.
-            created_at (datetime, optional): Data da transação. Se None, usa data atual.
+            date_str (str): A data da transação no formato 'YYYY-MM-DD'.
 
         Returns:
             Transaction: O objeto da transação criada.
 
         Raises:
-            ValorInvalidoError: Se o valor for inválido ou menor/igual a zero.
-            CarteiraInexistenteError: Se a carteira ou categoria não forem encontradas.
+            ValorInvalidoError: Se o valor for inválido/negativo ou a data estiver incorreta.
+            CarteiraInexistenteError: Se a carteira (ou categoria) não for encontrada.
             SaldoInsuficienteError: Se for uma despesa e a carteira não tiver saldo.
         """
         try:
@@ -171,17 +171,17 @@ class TransactionController():
         return True
 
     @staticmethod
-    def edit_transaction(transaction_id, value, created_at, description, category_id, user_id):
+    def edit_transaction(transaction_id, value, date_str, description, category_id, user_id):
         """Edita uma transação existente e recalcula o saldo da carteira.
 
         A função reverte o impacto da transação original no saldo da carteira,
-        verifica se há fundos suficientes para o novo valor (caso seja despesa)
+        valida a nova data e valor, verifica se há fundos suficientes (se for despesa)
         e aplica as alterações.
 
         Args:
             transaction_id (int): O ID da transação a ser editada.
             value (float|str): O novo valor da transação.
-            created_at (datetime): A nova data da transação.
+            date_str (str): A nova data da transação (formato YYYY-MM-DD).
             description (str): A nova descrição.
             category_id (int): O novo ID da categoria.
             user_id (int): O ID do usuário (para validação de segurança).
@@ -190,10 +190,10 @@ class TransactionController():
             Transaction: O objeto Transaction atualizado com os novos dados.
 
         Raises:
-            ValorInvalidoError: Se o novo valor não for numérico.
+            ValorInvalidoError: Se o novo valor não for numérico ou data inválida.
             TransacaoInexistenteError: Se a transação não for encontrada.
-            CarteiraInexistenteError: Se a carteira vinculada não for encontrada ou não pertencer ao usuário.
-            SaldoInsuficienteError: Se a alteração resultar em saldo negativo na carteira (apenas para despesas).
+            CarteiraInexistenteError: Se a carteira vinculada não for encontrada.
+            SaldoInsuficienteError: Se a alteração resultar em saldo negativo.
         """
         transaction = Transaction.query.filter_by(id= transaction_id).first()
 
@@ -201,6 +201,14 @@ class TransactionController():
             value = float(value)
         except (ValueError, TypeError):
             raise ValorInvalidoError("O valor da transação deve ser um número válido.")
+        
+        if value <= 0:
+            raise ValorInvalidoError("O valor da transação deve ser maior que zero.")
+        
+        try:
+            created_at = datetime.strptime(date_str, "%Y-%m-%d")
+        except (ValueError, TypeError):
+            raise ValorInvalidoError("Data da transação inválida.")
 
         if not transaction:
             raise TransacaoInexistenteError("Transação inexistente.")
