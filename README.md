@@ -82,7 +82,7 @@ O backend implementa diversas exceções personalizadas para garantir que o sist
 
 * **Linguagem:** [Python 3](https://www.python.org/)
 * **Framework Web:** [Flask](https://flask.palletsprojects.com/)
-* **Banco de Dados:** SQLite (Desenvolvimento) / MySQL (Produção)
+* **Banco de Dados:** SQLite
 * **ORM:** SQLAlchemy
 * **Frontend:** HTML5, CSS3, Tailwind, Jinja2
 
@@ -101,3 +101,16 @@ Siga o passo a passo para rodar o projeto localmente.
 ```bash
 git clone [https://github.com/SEU_USUARIO/financas-pessoais.git](https://github.com/SEU_USUARIO/financas-pessoais.git)
 cd financas-pessoais
+```
+
+### 2. Crie e ative um ambiente virtual
+
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
+
+# Linux/Mac
+python3 -m venv venv
+source venv/bin/activate
+```
