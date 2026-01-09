@@ -17,14 +17,14 @@ O diferencial do sistema é a integridade dos dados, implementando regras de neg
 
 ## ✨ Funcionalidades
 
-O sistema atende aos seguintes Requisitos Funcionais (RF):
+Requisitos Funcionais (RF):
 
 ### 🔐 Acesso e Perfil
 - [x] **Cadastro e Login:** Criação de conta e autenticação segura de usuários.
 
 ### 💳 Gestão de Carteiras
 - [x] **Múltiplas Carteiras:** Criação de carteiras (ex: Conta Corrente, Carteira Digital) com saldo inicial.
-- [x] **Edição/Exclusão:** Permite alterar nome/descrição ou excluir carteiras (somente se não houver transações vinculadas).
+- [x] **Exclusão em Cascata:** Ao excluir uma carteira, todas as transações vinculadas a ela são removidas automaticamente.
 - [x] **Cálculo Automático:** O saldo é recalculado automaticamente a cada nova transação.
 
 ### 💸 Transações (Receitas e Despesas)
@@ -34,7 +34,7 @@ O sistema atende aos seguintes Requisitos Funcionais (RF):
 
 ### 🎯 Planejamento Financeiro
 - [x] **Metas (Mensais/Anuais):** Definição de metas com nome, valor-alvo e prazo, com barra de progresso automática.
-- [x] **Objetivos Específicos:** Gestão de objetivos de longo prazo (ex: "Viagem", "Compra de Notebook") com acompanhamento baseado no saldo ou categorias específicas.
+- [x] **Objetivos Específicos:** Gestão de objetivos de longo prazo (ex: "Viagem", "Compra de Notebook") com acompanhamento baseado no saldo ou carteira específicas.
 
 ### 📊 Relatórios e Dashboard
 - [x] **Histórico Mensal:** Visualização de extrato filtrado por mês/ano.
@@ -52,7 +52,7 @@ O backend implementa diversas exceções personalizadas para garantir que o sist
 | :--- | :--- |
 | `SaldoInsuficienteError` | Impede despesas maiores que o saldo disponível na carteira. |
 | `ValorInvalidoError` | Bloqueia valores negativos ou zero em operações que exigem positivos. |
-| `TransacaoInexistenteError` | Disparado ao tentar editar/excluir uma transação que não existe. |
+| `TransacaoInexistenteError` | Disparado ao tentar editar/excluir uma transação que não existe no banco. |
 
 ### 📂 Carteiras & Categorias
 | Exceção | Descrição |
@@ -60,13 +60,12 @@ O backend implementa diversas exceções personalizadas para garantir que o sist
 | `CarteiraJaExisteError` | Evita criação de carteiras com nomes duplicados para o mesmo usuário. |
 | `CarteiraInexistenteError` | Garante que transações sejam vinculadas a carteiras reais. |
 | `CategoriaJaExisteError` | Evita duplicidade no cadastro de categorias personalizadas. |
-| `CategoriaInexistenteError` | Disparado ao buscar uma categoria que foi excluída ou não existe. |
-| `CategoriaInvalidaError` | Bloqueia o uso de categorias incompatíveis com o tipo de transação. |
+| `CategoriaInexistenteError` | Disparado ao tentar usar ou buscar uma categoria que não existe. |
 
 ### 🎯 Metas & Objetivos
 | Exceção | Descrição |
 | :--- | :--- |
-| `MetaJaExisteError` | Impede a criação de metas duplicadas para o mesmo período/categoria. |
+| `MetaJaExisteError` | Impede a criação de metas duplicadas para a mesma categoria. |
 | `MetaInexistenteError` | Tratamento para tentativas de acesso a metas não cadastradas. |
 | `ObjetivoInexistenteError` | Tratamento para tentativas de acesso a objetivos inválidos. |
 
@@ -84,7 +83,7 @@ O backend implementa diversas exceções personalizadas para garantir que o sist
 * **Framework Web:** [Flask](https://flask.palletsprojects.com/)
 * **Banco de Dados:** SQLite
 * **ORM:** SQLAlchemy
-* **Frontend:** HTML5, CSS3, Tailwind, Jinja2
+* **Frontend:** HTML5, Tailwind CSS, JavaScript (Chart.js), Jinja2
 
 ---
 
@@ -113,4 +112,14 @@ python -m venv venv
 # Linux/Mac
 python3 -m venv venv
 source venv/bin/activate
+```
+
+### 3. Instale as dependências
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Execute a aplicação
+```bash
+./iniciar_app.sh
 ```
