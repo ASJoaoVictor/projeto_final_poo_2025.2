@@ -21,7 +21,6 @@ O sistema atende aos seguintes Requisitos Funcionais (RF):
 
 ### 🔐 Acesso e Perfil
 - [x] **Cadastro e Login:** Criação de conta e autenticação segura de usuários.
-- [x] **Gestão de Perfil:** Gerenciamento de dados do próprio usuário.
 
 ### 💳 Gestão de Carteiras
 - [x] **Múltiplas Carteiras:** Criação de carteiras (ex: Conta Corrente, Carteira Digital) com saldo inicial.
@@ -41,7 +40,6 @@ O sistema atende aos seguintes Requisitos Funcionais (RF):
 - [x] **Histórico Mensal:** Visualização de extrato filtrado por mês/ano.
 - [x] **Indicadores:** Total de receitas, total de despesas e saldo final.
 - [x] **Gráficos:** Relatórios visuais de gastos por categoria.
-- [x] **Exportação:** Geração de relatórios em formato CSV ou Excel (e impressão em PDF opcional).
 
 ---
 
@@ -61,8 +59,7 @@ Para garantir a consistência do sistema, foram implementadas as seguintes exce�
 * **Framework Web:** [Flask](https://flask.palletsprojects.com/)
 * **Banco de Dados:** SQLite (Desenvolvimento) / MySQL (Produção)
 * **ORM:** SQLAlchemy
-* **Frontend:** HTML5, CSS3, Bootstrap, Jinja2
-* **Relatórios:** Pandas (para exportação CSV/Excel)
+* **Frontend:** HTML5, CSS3, Tailwind, Jinja2
 
 ---
 
