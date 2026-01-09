@@ -6,6 +6,7 @@ from routes.transaction_routes import transaction_bp
 from routes.category_routes import category_bp
 from routes.goal_routes import goal_bp
 from routes.objective_routes import objective_bp
+from routes.report_routes import report_bp
 from extensions import db, login_manager
 from models.user import User
 from utils import seeder
@@ -38,6 +39,7 @@ def create_app():
     app.register_blueprint(category_bp)
     app.register_blueprint(goal_bp)
     app.register_blueprint(objective_bp)
+    app.register_blueprint(report_bp)
 
     @app.route("/")
     def default():

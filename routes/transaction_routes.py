@@ -46,7 +46,9 @@ def transaction_page():
                            total_income=total_income, 
                            total_expense=total_expense, 
                            total_balance=total_balance,
-                           categories = categories)
+                           categories = categories,
+                           selected_month=selected_month,
+                           selected_year=selected_year)
 
 @transaction_bp.route("/new", methods=["GET"])
 @login_required

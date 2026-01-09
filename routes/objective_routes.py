@@ -28,6 +28,7 @@ def objective_index_page():
     categories = CategoryController.get_user_categories(current_user.id)
     objectives = ObjectiveController.get_objectives_user(current_user.id)
 
+    #Temporario
     objectives_data = []
     for objective in objectives:
         if objective.wallet:

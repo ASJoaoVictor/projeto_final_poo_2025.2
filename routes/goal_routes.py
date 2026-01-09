@@ -32,6 +32,7 @@ def goal_index_page():
 
     goals_data = []
 
+    #Temporario
     for goal in goals:
         current_amount = 0
         if goal.category:
