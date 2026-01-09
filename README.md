@@ -98,8 +98,8 @@ Siga o passo a passo para rodar o projeto localmente.
 ### 1. Clone o repositório
 
 ```bash
-git clone [https://github.com/SEU_USUARIO/financas-pessoais.git](https://github.com/SEU_USUARIO/financas-pessoais.git)
-cd financas-pessoais
+[git clone [https://github.com/SEU_USUARIO/financas-pessoais.git](https://github.com/SEU_USUARIO/financas-pessoais.git)
+cd financas-pessoais](https://github.com/ASJoaoVictor/projeto_final_poo_2025.2.git)
 ```
 
 ### 2. Crie e ative um ambiente virtual
@@ -121,5 +121,11 @@ pip install -r requirements.txt
 
 ### 4. Execute a aplicação
 ```bash
+# Via script (Linux/Mac)
 ./iniciar_app.sh
+
+# Ou via Python direto (Windows/Linux/Mac)
+python app.py
 ```
+## 📝 Licença
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
