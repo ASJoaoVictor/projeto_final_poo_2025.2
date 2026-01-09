@@ -43,13 +43,38 @@ O sistema atende aos seguintes Requisitos Funcionais (RF):
 
 ---
 
-## 🛡️ Tratamento de Erros e Regras de Negócio
+## 🛡️ Regras de Negócio e Tratamento de Erros
 
-Para garantir a consistência do sistema, foram implementadas as seguintes exceções personalizadas:
+O backend implementa diversas exceções personalizadas para garantir que o sistema nunca entre em um estado inválido. Abaixo estão as principais regras tratadas:
 
-1.  **`SaldoInsuficienteError`**: Disparado ao tentar registrar uma despesa maior que o saldo atual da carteira.
-2.  **`CategoriaInvalidaError`**: Disparado se o usuário tentar forçar uma categoria que não existe no sistema.
-3.  **`ValorInvalidoError`**: Disparado para tentativas de input de valores negativos ou formatos incorretos.
+### 💰 Financeiro & Transações
+| Exceção | Descrição |
+| :--- | :--- |
+| `SaldoInsuficienteError` | Impede despesas maiores que o saldo disponível na carteira. |
+| `ValorInvalidoError` | Bloqueia valores negativos ou zero em operações que exigem positivos. |
+| `TransacaoInexistenteError` | Disparado ao tentar editar/excluir uma transação que não existe. |
+
+### 📂 Carteiras & Categorias
+| Exceção | Descrição |
+| :--- | :--- |
+| `CarteiraJaExisteError` | Evita criação de carteiras com nomes duplicados para o mesmo usuário. |
+| `CarteiraInexistenteError` | Garante que transações sejam vinculadas a carteiras reais. |
+| `CategoriaJaExisteError` | Evita duplicidade no cadastro de categorias personalizadas. |
+| `CategoriaInexistenteError` | Disparado ao buscar uma categoria que foi excluída ou não existe. |
+| `CategoriaInvalidaError` | Bloqueia o uso de categorias incompatíveis com o tipo de transação. |
+
+### 🎯 Metas & Objetivos
+| Exceção | Descrição |
+| :--- | :--- |
+| `MetaJaExisteError` | Impede a criação de metas duplicadas para o mesmo período/categoria. |
+| `MetaInexistenteError` | Tratamento para tentativas de acesso a metas não cadastradas. |
+| `ObjetivoInexistenteError` | Tratamento para tentativas de acesso a objetivos inválidos. |
+
+### 👤 Usuários
+| Exceção | Descrição |
+| :--- | :--- |
+| `UsuarioJaExisteError` | Garante unicidade de e-mail/login no cadastro. |
+| `UsuarioInexistenteError` | Tratamento de segurança para falhas de autenticação ou busca de ID. |
 
 ---
 
