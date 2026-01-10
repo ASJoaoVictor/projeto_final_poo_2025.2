@@ -11,7 +11,7 @@ class Transaction(db.Model):
     description = db.Column(db.String(100), nullable= True)
 
     wallet_id = db.Column(db.Integer, db.ForeignKey("wallets.id"), nullable= False)
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable= True)
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable= False)
 
     category = db.relationship("Category", backref= "transactions", lazy= True)
     wallet = db.relationship("Wallet", backref= "transactions", lazy= True)

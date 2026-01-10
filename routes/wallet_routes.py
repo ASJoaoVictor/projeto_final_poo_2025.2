@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from controllers.wallet_controller import WalletController
 from controllers.transaction_controller import TransactionController
 from controllers.category_controller import CategoryController
-from utils.exceptions import ValorInvalidoError, CarteiraJaExisteError, CategoriaInvalidaError, CarteiraInexistenteError, AcessoNegadoError
+from utils.exceptions import ValorInvalidoError, CarteiraJaExisteError, CarteiraInexistenteError
 
 wallet_bp = Blueprint("wallet_bp", __name__, url_prefix="/wallet")
 
@@ -34,7 +34,7 @@ def create_wallet():
 
     try:
         WalletController.create_wallet(wallet_name, initial_balance, current_user.id)
-    except (ValorInvalidoError, CarteiraJaExisteError, CategoriaInvalidaError) as e:
+    except (ValorInvalidoError, CarteiraJaExisteError, CarteiraInexistenteError) as e:
         flash(str(e), "warning")
         return redirect(url_for("wallet_bp.wallet_new_page"))
     except Exception as e:

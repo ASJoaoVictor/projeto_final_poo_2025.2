@@ -2,7 +2,7 @@ from extensions import db
 from models.wallet import Wallet
 from models.category import SystemCategory
 from controllers.transaction_controller import TransactionController
-from utils.exceptions import ValorInvalidoError, CarteiraJaExisteError, CategoriaInvalidaError, CarteiraInexistenteError, AcessoNegadoError
+from utils.exceptions import ValorInvalidoError, CarteiraJaExisteError, CategoriaInexistenteError, CarteiraInexistenteError
 from datetime import datetime
 
 class WalletController():
@@ -60,7 +60,7 @@ class WalletController():
         category = SystemCategory.query.filter_by(name= "Depósito inicial").first()
 
         if not category:
-            raise CategoriaInvalidaError("Categoria padrão 'Depósito inicial' não encontrada.")
+            raise CategoriaInexistenteError("Categoria padrão 'Depósito inicial' não encontrada.")
 
         if initial_balance > 0:
             TransactionController.create_transaction(

@@ -2,7 +2,7 @@ from extensions import db
 from models.transaction import Transaction
 from models.wallet import Wallet
 from models.category import UserCategory, SystemCategory
-from utils.exceptions import CarteiraInexistenteError, SaldoInsuficienteError, CarteiraInexistenteError, ValorInvalidoError, TransacaoInexistenteError
+from utils.exceptions import SaldoInsuficienteError, CarteiraInexistenteError, ValorInvalidoError, TransacaoInexistenteError
 from sqlalchemy import extract
 from datetime import datetime
 
