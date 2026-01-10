@@ -2,25 +2,43 @@ from flask import Blueprint, render_template, request, jsonify
 from controllers.report_controller import ReportController
 from datetime import datetime
 from flask_login import login_required, current_user
-# Importe o ReportController criado acima
 
 report_bp = Blueprint('report_bp', __name__, url_prefix='/teste')
 
 @report_bp.route("/", methods=["GET"])
 def report_page():
+    """Exibe a página principal de relatórios financeiros.
+
+    Esta rota atua como um orquestrador, coletando filtros da requisição HTTP e 
+    buscando os dados consolidados no `ReportController` para alimentar a interface.
+
+    Processos realizados:
+    1. Captura filtros de Mês/Ano da URL (padrão: data atual).
+    2. Busca Patrimônio Total acumulado.
+    3. Busca Resumo Mensal de Entradas/Saídas.
+    4. Busca e formata dados de Categorias para renderização no Chart.js.
+
+    Query Params:
+        month (int, optional): O mês para filtragem (1-12). Default: Mês atual.
+        year (int, optional): O ano para filtragem (ex: 2026). Default: Ano atual.
+
+    Returns:
+        str: O template HTML renderizado ('report/index.html') com o contexto 
+             necessário para popular os cards e gráficos.
+    """
     today = datetime.now()
     
     # Filtros da URL (ou padrão mês atual)
     selected_month = request.args.get("month", today.month, type=int)
     selected_year = request.args.get("year", today.year, type=int)
 
-    # 1. Dados Consolidados (RF9.3)
+    # 1. Dados Consolidados
     total_patrimony = ReportController.get_consolidated_wallet_balance(current_user.id)
 
-    # 2. Resumo Mensal (RF9.2)
+    # 2. Resumo Mensal
     monthly_summary = ReportController.get_monthly_summary(current_user.id, selected_month, selected_year)
 
-    # 3. Dados por Categoria (RF9.1)
+    # 3. Dados por Categoria
     category_data = ReportController.get_expenses_by_category(current_user.id, selected_month, selected_year)
     
     # Prepara dados para o Chart.js (separa labels e values)

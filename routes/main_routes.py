@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from controllers.wallet_controller import WalletController
+from controllers.report_controller import ReportController
 
 main_bp = Blueprint("main_bp", __name__)
 
@@ -20,5 +21,5 @@ def dashboard_page():
     """
     wallets = WalletController.get_wallets_by_user(current_user.id)
 
-    total_balance = sum(wallet.current_balance for wallet in wallets)
+    total_balance = ReportController.get_consolidated_wallet_balance(current_user.id)
     return render_template("index.html", user= current_user, wallets= wallets, total_balance=total_balance)
