@@ -1,6 +1,31 @@
 from extensions import db
 
 class Objective(db.Model):
+    """Modelo de dados que representa um Objetivo Financeiro (Sonho/Aquisição).
+
+    Diferente das Metas (Goals) que funcionam como tetos de gastos por categoria,
+    os Objetivos representam conquistas materiais ou experiências específicas de 
+    longo ou curto prazo (ex: 'Comprar Carro Novo', 'Viagem para Europa', 'PS5').
+
+    Regra de Negócio:
+    - O Objetivo pode ser vinculado a uma Carteira (`wallet_id`). Isso permite rastrear
+      onde o dinheiro para este sonho está sendo acumulado (ex: uma conta de Investimento
+      ou um 'Cofrinho' específico).
+
+    Attributes:
+        id (int): Identificador único do objetivo.
+        objective_name (str): O título do objetivo.
+        target_amount (float): O valor total necessário para realizar o objetivo.
+        due_date (datetime, optional): A data planejada para a realização.
+        is_active (bool): Flag de status. Se False, o objetivo foi concluído ou desistido.
+        icon (str, optional): Um emoji ou código de ícone para representação visual no Dashboard.
+        
+        user_id (int): Chave estrangeira do usuário dono do objetivo.
+        wallet_id (int, optional): Chave estrangeira da carteira onde os fundos estão alocados.
+        
+        user (User): Relacionamento ORM com o usuário.
+        wallet (Wallet): Relacionamento ORM com a carteira vinculada.
+    """
     __tablename__ = "objectives"
 
     id = db.Column(db.Integer, primary_key=True)

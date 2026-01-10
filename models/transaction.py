@@ -2,6 +2,31 @@ from extensions import db
 from datetime import datetime, timezone
 
 class Transaction(db.Model):
+    """Modelo de dados que representa uma movimentação financeira individual.
+
+    Esta é a entidade central do sistema. Registra cada fluxo de entrada (income) 
+    ou saída (expense) de dinheiro. Diferente de saldos que são calculados, 
+    a transação é o registro histórico do fato.
+
+    Regras de Negócio:
+    - Toda transação DEVE pertencer a uma Carteira (`wallet_id`).
+    - Toda transação DEVE ter uma Categoria (`category_id`).
+
+    Attributes:
+        id (int): Identificador único da transação (Primary Key).
+        transaction_type (str): Define a natureza do movimento. Valores esperados:
+                                'income' (Receita) ou 'expense' (Despesa).
+        value (float): O valor monetário absoluto da transação.
+        created_at (date): Data de competência da transação. Se não informada,
+                           assume a data atual (UTC) automaticamente.
+        description (str, optional): Um texto curto para detalhes extras (ex: 'Almoço no Shopping').
+        
+        wallet_id (int): Chave estrangeira da carteira afetada.
+        category_id (int): Chave estrangeira da categoria que classifica este gasto/ganho.
+        
+        wallet (Wallet): Relacionamento ORM para acessar o objeto da carteira.
+        category (Category): Relacionamento ORM para acessar o objeto da categoria.
+    """
     __tablename__ = "transactions"
 
     id = db.Column(db.Integer, primary_key= True)
