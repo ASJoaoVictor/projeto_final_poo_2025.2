@@ -2,7 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user
 from extensions import db
 from models.user import User
-from utils.exceptions import UsuarioJaExisteError, UsuarioInexistenteError
+from utils.exceptions import UsuarioJaExisteError, UsuarioInexistenteError, SenhasDiferentes
 
 class AuthController():
     """Controlador responsável pelas operações de autenticação de usuários."""
@@ -36,7 +36,7 @@ class AuthController():
         raise UsuarioInexistenteError("Usuário ou senha inválidos.")
 
     @staticmethod
-    def register(username, email, password):
+    def register(username, email, password, confirm_password):
         """Registra um novo usuário no sistema.
 
         Verifica duplicidade de email, cria o hash da senha e persiste
@@ -46,18 +46,25 @@ class AuthController():
             username (str): O nome de usuário desejado.
             email (str): O endereço de email do usuário.
             password (str): A senha em texto plano para ser criptografada.
+            confirm_password (str): A senha em texto para confirmar a senha.
 
         Returns:
             User: O objeto do novo usuário criado.
 
         Raises:
             UsuarioJaExisteError: Se já existir um usuário com o email fornecido.
+            SenhasDiferentes: Se as senhas enviadas não forem iguais.
         """
         #Verificar se user existe
         existing_user = User.query.filter_by(email= email).first()
 
         if existing_user:
             raise UsuarioJaExisteError("Usuário com esse email já existe.")
+
+        #verificar senha
+        if not password == confirm_password:
+            raise SenhasDiferentes("As senhas precisam serem iguais.")
+
         
         #Crifrar senha
         password_hash = generate_password_hash(password)

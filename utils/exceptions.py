@@ -33,3 +33,6 @@ class UsuarioJaExisteError(Exception):
 
 class UsuarioInexistenteError(Exception):
     pass
+
+class SenhasDiferentes(Exception):
+    pass

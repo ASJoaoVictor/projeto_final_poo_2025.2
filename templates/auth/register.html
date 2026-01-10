@@ -35,11 +35,11 @@
             <input type="email" name="email" placeholder="seuemail@exemplo.com" class="w-full border border-gray-300 rounded px-3 py-2"><br>
 
             <label for="" class="block mb-1">Senha:</label>
-            <input type="password" name="password" placeholder="********" class="w-full border border-gray-300 rounded px-3 py-2">
+            <input type="password" name="password" placeholder="********" minlength="8" class="w-full border border-gray-300 rounded px-3 py-2">
             <label for="" id="msg_password"></label><br>
 
             <label for="" class="block mb-1">Confirmar senha:</label>
-            <input type="password" name="" placeholder="********" class="w-full border border-gray-300 rounded px-3 py-2" disabled>
+            <input type="password" name="confirm_password" placeholder="********" minlength="8" class="w-full border border-gray-300 rounded px-3 py-2">
 
             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 rounded text-white transition px-3 py-2 mt-4">Cadastrar</button>
         </form>
@@ -50,19 +50,4 @@
 
     </div>
 </body>
-<script>
-    var input_password = document.getElementsByName("password")[0]
-    var message = document.getElementById("msg_password")
-    input_password.addEventListener("input", () => {
-        password = input_password.value
-        console.log(password.length)
-        if(password.length >= 8){
-            message.innerText = "Forte"
-            message.style.color = "green"
-            input_password.style.outlineColor = "rgb(22 163 74)"
-        }else if(password.length >= 5){
-            message.innerText = "média"
-        }
-    });
-</script>
 </html>

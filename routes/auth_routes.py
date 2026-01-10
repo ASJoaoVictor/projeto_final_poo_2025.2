@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from controllers.auth_controller import AuthController
-from utils.exceptions import UsuarioJaExisteError, UsuarioInexistenteError
+from utils.exceptions import UsuarioJaExisteError, UsuarioInexistenteError, SenhasDiferentes
 
 auth_bp = Blueprint("auth_bp", __name__, url_prefix="/auth")
 
@@ -36,7 +36,6 @@ def login():
     #pegar dados do form
     email = request.form.get("email")
     password = request.form.get("password")
-
 
     try: 
         user = AuthController.login(email, password)
@@ -76,10 +75,11 @@ def register():
     username = request.form.get("username")
     email = request.form.get("email")
     password = request.form.get("password")
+    confirm_password = request.form.get("confirm_password")
 
     try:
-        user = AuthController.register(username, email, password)
-    except UsuarioInexistenteError as e:
+        user = AuthController.register(username, email, password, confirm_password)
+    except (UsuarioInexistenteError, SenhasDiferentes) as e:
         flash(str(e), "error")
         return redirect(url_for("auth_bp.register_page"))
     except Exception as e:
