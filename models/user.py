@@ -24,7 +24,15 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key= True)
     username = db.Column(db.String(100), nullable= False)
     email = db.Column(db.String(120), unique= True, nullable= False)
-    password = db.Column(db.String(255), nullable= False)
+    _password = db.Column(db.String(255), nullable= False)
+
+    @property
+    def password(self):
+        raise AttributeError("A senha não é um atributo legível!")
+
+    @password.setter
+    def password(self, password_value):
+        self.password = password_value
 
     def __repr__(self):
         return f"<User {self.email}>"
