@@ -79,7 +79,7 @@ def register():
 
     try:
         user = AuthController.register(username, email, password, confirm_password)
-    except (UsuarioInexistenteError, SenhasDiferentes) as e:
+    except (UsuarioJaExisteError, SenhasDiferentes) as e:
         flash(str(e), "error")
         return redirect(url_for("auth_bp.register_page"))
     except Exception as e:

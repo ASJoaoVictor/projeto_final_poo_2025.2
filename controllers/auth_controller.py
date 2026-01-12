@@ -29,7 +29,7 @@ class AuthController():
         if not existing_user:
             raise UsuarioInexistenteError("Usuário não encontrado.")
         
-        if(check_password_hash(existing_user.password, password)):
+        if(existing_user.check_password(password)):
             login_user(existing_user)
             return existing_user
         
@@ -65,12 +65,10 @@ class AuthController():
         if not password == confirm_password:
             raise SenhasDiferentes("As senhas precisam serem iguais.")
 
-        
-        #Crifrar senha
         password_hash = generate_password_hash(password)
 
         #criar novo usuário
-        new_user = User(username= username, email= email, password= password_hash)
+        new_user = User(username= username, email= email, _password= password_hash)
 
         #salva no db
         db.session.add(new_user)

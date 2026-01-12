@@ -1,5 +1,6 @@
 from extensions import db
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model, UserMixin):
     """Modelo de dados que representa um usuário registrado no sistema.
@@ -32,7 +33,10 @@ class User(db.Model, UserMixin):
 
     @password.setter
     def password(self, password_value):
-        self.password = password_value
+        self._password = password_value
+
+    def check_password(self, password):
+        return check_password_hash(self._password, password)
 
     def __repr__(self):
         return f"<User {self.email}>"
