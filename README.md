@@ -103,8 +103,8 @@ Siga o passo a passo para rodar o projeto localmente.
 ### 1. Clone o repositório
 
 ```bash
-git clone [https://github.com/SEU_USUARIO/financas-pessoais.git](https://github.com/SEU_USUARIO/financas-pessoais.git)
-cd financas-pessoais
+git clone https://github.com/ASJoaoVictor/projeto_final_poo_2025.2.git
+cd projeto_final_poo_2025.2
 ```
 
 ### 2. Crie e ative um ambiente virtual
