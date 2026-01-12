@@ -17,18 +17,7 @@ O diferencial do sistema é a integridade dos dados, implementando regras de neg
 
 ## ✨ Funcionalidades
 
-<<<<<<< HEAD
 O sistema atende aos seguintes Requisitos Funcionais (RF):
-
-### 🔐 Acesso e Perfil
-- [x] **Cadastro e Login:** Criação de conta e autenticação segura de usuários.
-- [x] **Gestão de Perfil:** Gerenciamento de dados do próprio usuário.
-
-### 💳 Gestão de Carteiras
-- [x] **Múltiplas Carteiras:** Criação de carteiras (ex: Conta Corrente, Carteira Digital) com saldo inicial.
-- [x] **Edição/Exclusão:** Permite alterar nome/descrição ou excluir carteiras (somente se não houver transações vinculadas).
-=======
-Requisitos Funcionais (RF):
 
 ### 🔐 Acesso e Perfil
 - [x] **Cadastro e Login:** Criação de conta e autenticação segura de usuários.
@@ -36,7 +25,6 @@ Requisitos Funcionais (RF):
 ### 💳 Gestão de Carteiras
 - [x] **Múltiplas Carteiras:** Criação de carteiras (ex: Conta Corrente, Carteira Digital) com saldo inicial.
 - [x] **Exclusão em Cascata:** Ao excluir uma carteira, todas as transações vinculadas a ela são removidas automaticamente.
->>>>>>> 239e75be867a492832ab96410da6cc4ed01c5b0c
 - [x] **Cálculo Automático:** O saldo é recalculado automaticamente a cada nova transação.
 
 ### 💸 Transações (Receitas e Despesas)
@@ -46,29 +34,13 @@ Requisitos Funcionais (RF):
 
 ### 🎯 Planejamento Financeiro
 - [x] **Metas (Mensais/Anuais):** Definição de metas com nome, valor-alvo e prazo, com barra de progresso automática.
-<<<<<<< HEAD
 - [x] **Objetivos Específicos:** Gestão de objetivos de longo prazo (ex: "Viagem", "Compra de Notebook") com acompanhamento baseado no saldo ou categorias específicas.
-=======
 - [x] **Objetivos Específicos:** Gestão de objetivos de longo prazo (ex: "Viagem", "Compra de Notebook") com acompanhamento baseado no saldo ou carteira específicas.
->>>>>>> 239e75be867a492832ab96410da6cc4ed01c5b0c
 
 ### 📊 Relatórios e Dashboard
 - [x] **Histórico Mensal:** Visualização de extrato filtrado por mês/ano.
 - [x] **Indicadores:** Total de receitas, total de despesas e saldo final.
 - [x] **Gráficos:** Relatórios visuais de gastos por categoria.
-<<<<<<< HEAD
-- [x] **Exportação:** Geração de relatórios em formato CSV ou Excel (e impressão em PDF opcional).
-
----
-
-## 🛡️ Tratamento de Erros e Regras de Negócio
-
-Para garantir a consistência do sistema, foram implementadas as seguintes exceções personalizadas:
-
-1.  **`SaldoInsuficienteError`**: Disparado ao tentar registrar uma despesa maior que o saldo atual da carteira.
-2.  **`CategoriaInvalidaError`**: Disparado se o usuário tentar forçar uma categoria que não existe no sistema.
-3.  **`ValorInvalidoError`**: Disparado para tentativas de input de valores negativos ou formatos incorretos.
-=======
 
 ---
 
@@ -103,7 +75,6 @@ O backend implementa diversas exceções personalizadas para garantir que o sist
 | :--- | :--- |
 | `UsuarioJaExisteError` | Garante unicidade de e-mail/login no cadastro. |
 | `UsuarioInexistenteError` | Tratamento de segurança para falhas de autenticação ou busca de ID. |
->>>>>>> 239e75be867a492832ab96410da6cc4ed01c5b0c
 
 ---
 
@@ -111,16 +82,13 @@ O backend implementa diversas exceções personalizadas para garantir que o sist
 
 * **Linguagem:** [Python 3](https://www.python.org/)
 * **Framework Web:** [Flask](https://flask.palletsprojects.com/)
-<<<<<<< HEAD
 * **Banco de Dados:** SQLite (Desenvolvimento) / MySQL (Produção)
 * **ORM:** SQLAlchemy
 * **Frontend:** HTML5, CSS3, Bootstrap, Jinja2
 * **Relatórios:** Pandas (para exportação CSV/Excel)
-=======
 * **Banco de Dados:** SQLite
 * **ORM:** SQLAlchemy
 * **Frontend:** HTML5, Tailwind CSS, JavaScript (Chart.js), Jinja2
->>>>>>> 239e75be867a492832ab96410da6cc4ed01c5b0c
 
 ---
 
@@ -135,12 +103,8 @@ Siga o passo a passo para rodar o projeto localmente.
 ### 1. Clone o repositório
 
 ```bash
-<<<<<<< HEAD
-git clone [https://github.com/SEU_USUARIO/financas-pessoais.git](https://github.com/SEU_USUARIO/financas-pessoais.git)
-cd financas-pessoais
-=======
-[git clone [https://github.com/SEU_USUARIO/financas-pessoais.git](https://github.com/SEU_USUARIO/financas-pessoais.git)
-cd financas-pessoais](https://github.com/ASJoaoVictor/projeto_final_poo_2025.2.git)
+git clone https://github.com/ASJoaoVictor/projeto_final_poo_2025.2.git
+cd projeto_final_poo_2025.2
 ```
 
 ### 2. Crie e ative um ambiente virtual
@@ -170,4 +134,3 @@ python app.py
 ```
 ## 📝 Licença
 Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
->>>>>>> 239e75be867a492832ab96410da6cc4ed01c5b0c
