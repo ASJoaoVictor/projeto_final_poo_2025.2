@@ -82,10 +82,6 @@ O backend implementa diversas exceções personalizadas para garantir que o sist
 
 * **Linguagem:** [Python 3](https://www.python.org/)
 * **Framework Web:** [Flask](https://flask.palletsprojects.com/)
-* **Banco de Dados:** SQLite (Desenvolvimento) / MySQL (Produção)
-* **ORM:** SQLAlchemy
-* **Frontend:** HTML5, CSS3, Bootstrap, Jinja2
-* **Relatórios:** Pandas (para exportação CSV/Excel)
 * **Banco de Dados:** SQLite
 * **ORM:** SQLAlchemy
 * **Frontend:** HTML5, Tailwind CSS, JavaScript (Chart.js), Jinja2
